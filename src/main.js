@@ -7,10 +7,8 @@ import { createWeatherCard, clearWeatherCard } from './js/render-function';
 const input = document.querySelector('.header-input');
 
 async function showWeatherByCoords(lat, lon) {
-  const data = await getWeatherByCoords(lat, lon);
   try {
     const data = await getWeatherByCoords(lat, lon);
-
     createWeatherCard({
       city: data.name,
       country: data.sys.country,
