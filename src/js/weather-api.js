@@ -16,10 +16,10 @@ export async function getWeatherData(city) {
   return response.data;
 }
 
-export async function getWeatherByCoords(lan, lot) {
+export async function getWeatherByCoords(lat, lon) {
   const searchParam = new URLSearchParams({
-    lan,
-    lot,
+    lat,
+    lon,
     appid: apiKey,
     units: 'metric',
   });
