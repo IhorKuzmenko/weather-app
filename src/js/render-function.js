@@ -1,6 +1,7 @@
 import sprite from '../img/icons.svg?url';
 
 const weatherCard = document.querySelector('.weather-card');
+const dateInfo = document.querySelector('.datetime-card');
 
 const iconMap = {
   '01d': 'icon-sun',
@@ -24,11 +25,24 @@ const iconMap = {
 };
 
 export function createWeatherCard(data) {
-  const { city, country, temp, tempMin, tempMax, icon } = data;
+  const {
+    city,
+    country,
+    temp,
+    tempMin,
+    tempMax,
+    icon,
+    day,
+    weekday,
+    month,
+    time,
+    sunrise,
+    sunset,
+  } = data;
 
   const iconClass = iconMap[icon] || 'icon-sun';
 
-  const markup = `
+  const weatherMarkup = `
                 <svg class="weather-icon">
                     <use href="${sprite}#${iconClass}"></use>
                 </svg>
@@ -48,10 +62,42 @@ export function createWeatherCard(data) {
                 </div>
     `;
 
-  weatherCard.innerHTML = markup;
+  const dateMarkup = `
+            <ul class="datetime-wrapper">
+              <li class="datetime-day">${day}</li>
+              <li class="datetime-weekday">${weekday}</li>
+            </ul>
+            <ul class="datetime-wrapper">
+              <li class="datetime-month">${month}</li>
+              <li class="datetime-time">${time}</li>
+            </ul>
+              <ul class="datetime-wrapper">
+              <li>
+                <svg class="datetime-icon">
+                  <use href="./img/icons.svg#icon-sunrise"></use>
+                </svg>
+                <p class="datetime-sunrise">${sunrise}</p>
+              </li>
+              <li>
+                <svg class="datetime-icon">
+                  <use href="./img/icons.svg#icon-sunset"></use>
+                </svg>
+                <p class="datetime-sunset">${sunset}</p>
+              </li>
+            </ul>
+  `;
+
+  weatherCard.innerHTML = weatherMarkup;
   weatherCard.style.display = 'block';
+
+  dateInfo.innerHTML = dateMarkup;
+  dateInfo.style.display = 'block';
 }
 
 export function clearWeatherCard() {
   weatherCard.innerHTML = '';
+}
+
+export function clearDateInfoCard() {
+  dateInfo.innerHTML = '';
 }

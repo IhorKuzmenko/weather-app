@@ -1,3 +1,7 @@
+.home {
+  padding-bottom: 32px;
+}
+
 .weather-card {
   display: none;
   margin-top: 40px;
@@ -63,4 +67,134 @@
   font-weight: 400;
   font-size: 16px;
   line-height: 100%;
+}
+
+.buttons-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  padding: 0 5px;
+}
+
+.button {
+  display: inline-block;
+  padding: 5.5px 39px;
+  text-align: center;
+  min-width: 126px;
+  height: 27px;
+  text-transform: uppercase;
+  background-color: #ffffff;
+  border-radius: 20px;
+
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 100%;
+  color: #000000;
+
+  transition: box-shadow 250ms ease, transform 250ms ease;
+}
+
+.button:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(16, 33, 54, 0.35);
+}
+
+.inactive {
+  background-color: #ffffff50;
+}
+
+.datetime-card {
+  display: none;
+  margin-bottom: 44px;
+  padding: 32px 50px;
+  text-align: center;
+  width: 100%;
+  background-color: rgba(16, 33, 54, 0.8);
+  border-radius: 34px;
+}
+
+.datetime-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.datetime-wrapper:nth-child(1) {
+  margin-bottom: 19px;
+}
+
+.datetime-wrapper:nth-child(2) {
+  margin-bottom: 16px;
+}
+
+.datetime-wrapper:nth-child(3) li {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.datetime-wrapper:nth-child(3) li:last-child {
+  border-left: 1px solid #ffffff40;
+}
+
+.datetime-day,
+.datetime-weekday {
+  font-weight: 300;
+  font-size: 45px;
+  line-height: 100%;
+  letter-spacing: 4%;
+}
+
+.datetime-day {
+  margin-right: 20px;
+}
+
+.datetime-month,
+.datetime-time {
+  padding: 0px 10px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 4%;
+}
+
+.datetime-month {
+  border-right: 1px solid #ffffff40;
+}
+
+.datetime-icon {
+  margin-right: 9px;
+  width: 20px;
+  height: 20px;
+  fill: #ff6b09;
+}
+
+.datetime-sunrise,
+.datetime-sunset {
+  font-weight: 400;
+  line-height: 100%;
+  letter-spacing: 4%;
+}
+
+.datetime-sunrise {
+  margin-right: 7px;
+}
+
+.home-quote {
+  margin-bottom: 8px;
+  text-align: end;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: 4%;
+}
+
+.home-quote-author {
+  text-align: end;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: 4%;
 }
