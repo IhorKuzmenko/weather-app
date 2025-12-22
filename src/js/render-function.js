@@ -74,13 +74,13 @@ export function createWeatherCard(data) {
               <ul class="datetime-wrapper">
               <li>
                 <svg class="datetime-icon">
-                  <use href="./img/icons.svg#icon-sunrise"></use>
+                  <use href="${sprite}#icon-sunrise"></use>
                 </svg>
                 <p class="datetime-sunrise">${sunrise}</p>
               </li>
               <li>
                 <svg class="datetime-icon">
-                  <use href="./img/icons.svg#icon-sunset"></use>
+                  <use href="${sprite}#icon-sunset"></use>
                 </svg>
                 <p class="datetime-sunset">${sunset}</p>
               </li>

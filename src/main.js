@@ -48,7 +48,7 @@ function formatSunTime(unix, timezone) {
   return new Date((unix + timezone) * 1000).toUTCString().slice(17, 22);
 }
 
-async function showWeatherByCoords(lat, lon) {
+async function showWeatherByCoords(lat, lon, city = null, country = null) {
   try {
     const data = await getWeatherByCoords(lat, lon);
     const dateInfo = getDateInfo();
