@@ -48,14 +48,14 @@ function formatSunTime(unix, timezone) {
   return new Date((unix + timezone) * 1000).toUTCString().slice(17, 22);
 }
 
-async function showWeatherByCoords(lat, lon, city = null, country = null) {
+async function showWeatherByCoords(lat, lon) {
   try {
     const data = await getWeatherByCoords(lat, lon);
     const dateInfo = getDateInfo();
 
     createWeatherCard({
-      city: data.name,
-      country: data.sys.country,
+      city: data?.name,
+      country: data?.sys?.country,
       temp: Math.round(data.main.temp),
       tempMin: Math.round(data.main.temp_min),
       tempMax: Math.round(data.main.temp_max),
@@ -78,13 +78,6 @@ async function showWeatherByCoords(lat, lon, city = null, country = null) {
 }
 
 window.addEventListener('load', () => {
-  const fallbackCity = {
-    lat: 50.4501,
-    lon: 30.5234,
-    city: 'Kyiv',
-    country: 'UA',
-  };
-
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       position => {
@@ -98,12 +91,7 @@ window.addEventListener('load', () => {
           timeout: 5000,
         });
 
-        showWeatherByCoords(
-          fallbackCity.lat,
-          fallbackCity.lon,
-          fallbackCity.city,
-          fallbackCity.country
-        );
+        showWeatherByCoords(50.4333, 30.5167);
       }
     );
   } else {
@@ -113,12 +101,7 @@ window.addEventListener('load', () => {
       timeout: 5000,
     });
 
-    showWeatherByCoords(
-      fallbackCity.lat,
-      fallbackCity.lon,
-      fallbackCity.city,
-      fallbackCity.country
-    );
+    showWeatherByCoords(50.4333, 30.5167);
   }
 });
 
