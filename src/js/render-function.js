@@ -67,6 +67,7 @@ export function createWeatherCard(data) {
               <li class="datetime-day">${day}</li>
               <li class="datetime-weekday">${weekday}</li>
             </ul>
+            <div class="datetime-container">
             <ul class="datetime-wrapper">
               <li class="datetime-month">${month}</li>
               <li class="datetime-time">${time}</li>
@@ -85,6 +86,7 @@ export function createWeatherCard(data) {
                 <p class="datetime-sunset">${sunset}</p>
               </li>
             </ul>
+            </div>
   `;
 
   weatherCard.innerHTML = weatherMarkup;

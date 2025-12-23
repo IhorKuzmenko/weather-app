@@ -1,3 +1,11 @@
+body {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+    url('../img/hero_tablet_home.jpg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
 .home {
   padding-bottom: 32px;
 }
@@ -46,13 +54,12 @@
   align-items: center;
 }
 
-.temp-item:first-child {
-  padding-right: 8px;
-  border-right: 1px solid #27384a;
+.temp-item {
+  padding: 8px;
 }
 
-.temp-item:last-child {
-  padding-left: 8px;
+.temp-item:first-child {
+  border-right: 1px solid #27384a;
 }
 
 .temp-name {
@@ -124,17 +131,17 @@
   margin-bottom: 19px;
 }
 
-.datetime-wrapper:nth-child(2) {
+.datetime-container .datetime-wrapper:nth-child(1) {
   margin-bottom: 16px;
 }
 
-.datetime-wrapper:nth-child(3) li {
+.datetime-container .datetime-wrapper:nth-child(2) li {
   display: flex;
   align-items: center;
   padding: 0 10px;
 }
 
-.datetime-wrapper:nth-child(3) li:last-child {
+.datetime-container .datetime-wrapper:nth-child(2) li:last-child {
   border-left: 1px solid #ffffff40;
 }
 
@@ -197,4 +204,209 @@
   font-size: 18px;
   line-height: 100%;
   letter-spacing: 4%;
+}
+
+/* FOR TABLET */
+
+@media (min-width: 768px) {
+  body {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+      url('../img/hero_tablet_home.jpg');
+  }
+
+  .home {
+    padding-bottom: 40px;
+  }
+
+  .weather-card {
+    display: none;
+    margin-top: 106px;
+    padding: 32px 280px 32px 280px;
+  }
+
+  .weather-icon {
+    margin-bottom: 5px;
+  }
+
+  .weather-temp-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .weather-location {
+    font-size: 18px;
+  }
+
+  .weather-temp {
+    margin-bottom: 16px;
+    font-size: 90px;
+  }
+
+  .temp-name {
+    margin-bottom: 6px;
+    font-size: 18px;
+  }
+
+  .temp-value {
+    font-size: 18px;
+  }
+
+  .temp-item {
+    padding: 15px;
+  }
+
+  .buttons-wrapper {
+    margin: 0 auto;
+    margin-bottom: 32px;
+    width: 336px;
+  }
+
+  .button {
+    display: inline-block;
+    padding: 5.5px 52px;
+    min-width: 152px;
+
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .datetime-card {
+    margin-bottom: 60px;
+    padding: 32px 207px;
+  }
+
+  .datetime-wrapper:nth-child(1) {
+    margin-bottom: 16px;
+  }
+
+  .datetime-container .datetime-wrapper:nth-child(1) {
+    margin-bottom: 30px;
+  }
+
+  .datetime-container .datetime-wrapper:nth-child(2) li {
+    padding: 0 16px;
+  }
+
+  .datetime-day,
+  .datetime-weekday {
+    font-size: 90px;
+  }
+
+  .datetime-month,
+  .datetime-time {
+    padding: 0px 16px;
+    font-size: 18px;
+  }
+
+  .datetime-icon {
+    margin-right: 8px;
+  }
+
+  .datetime-sunrise,
+  .datetime-sunset {
+    font-size: 18px;
+  }
+
+  .home-quote {
+    margin-left: auto;
+    margin-bottom: 20px;
+    width: 380px;
+    font-size: 22px;
+  }
+
+  .home-quote-author {
+    font-size: 18px;
+  }
+}
+
+/* FOR DESKTOP */
+
+@media (min-width: 1280px) {
+  body {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+      url('../img/desktop_home.jpg');
+  }
+
+  .home {
+    padding-bottom: 0;
+  }
+
+  .weather-card {
+    margin-left: auto;
+    padding: 32px 107px 32px 107px;
+    text-align: center;
+    width: 411px;
+    height: 100%;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .weather-icon {
+    width: 55px;
+    height: 35px;
+    margin-bottom: 4px;
+  }
+
+  .temp-name {
+    margin-bottom: 15px;
+  }
+
+  .temp-item {
+    padding: 16px;
+  }
+
+  .buttons-wrapper {
+    justify-content: space-between;
+    margin: 0;
+    margin-bottom: 85px;
+    margin-left: auto;
+    width: 411px;
+  }
+
+  .button {
+    padding: 5.5px 67px;
+    min-width: 182px;
+  }
+
+  .dektop-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 16px;
+  }
+
+  .datetime-container .datetime-wrapper:nth-child(1) {
+    margin-bottom: 0;
+  }
+
+  .datetime-container .datetime-wrapper:nth-child(2) {
+    margin-bottom: 0;
+  }
+
+  .datetime-card {
+    display: flex !important;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 0;
+    padding: 50px 103px 80px 16px;
+    width: 624px;
+    border-radius: 0;
+    border-top-right-radius: 34px;
+  }
+
+  .datetime-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .datetime-month {
+    padding-left: 0;
+  }
+
+  .home-quote {
+    margin-bottom: 32px;
+    width: 411px;
+  }
 }
