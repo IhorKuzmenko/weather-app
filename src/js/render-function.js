@@ -25,6 +25,8 @@ const iconMap = {
 };
 
 export function createWeatherCard(data) {
+  if (!weatherCard || !dateInfo) return;
+
   const {
     city,
     country,
@@ -102,4 +104,87 @@ export function clearWeatherCard() {
 
 export function clearDateInfoCard() {
   dateInfo.innerHTML = '';
+}
+
+//FIVE DAYS
+
+const forecastContainer = document.querySelector('.forecast-container');
+const forecastCity = forecastContainer
+  ? forecastContainer.querySelector('.forecast-city')
+  : null;
+const forecastFiveDays = document.querySelector('.forecast-5days');
+
+export function setForecastCity(cityName, countryCode) {
+  if (!forecastCity) return;
+  forecastCity.textContent = `${cityName}, ${countryCode}`;
+}
+
+export function createForecastFiveDaysCards(data) {
+  if (!forecastFiveDays || !forecastContainer) return;
+  const daysMap = new Map(); // A Map is a collection of key-value pairs.
+
+  data.list.forEach(item => {
+    const date = item.dt_txt.split(' ')[0]; //We take only the date from the dt_txt string, ignoring the time.
+
+    if (!daysMap.has(date)) {
+      daysMap.set(date, []);
+    }
+
+    daysMap.get(date).push(item);
+  });
+
+  const firstFiveDays = Array.from(daysMap.entries()).slice(0, 5); //Take the first 5 days
+
+  const forecastMarkup = [];
+
+  firstFiveDays.forEach(([date, dayDataArray]) => {
+    const firstItem = dayDataArray[0];
+    const { dt_txt, main, weather } = firstItem;
+
+    const dateObj = new Date(dt_txt);
+    const day = dateObj.getDate();
+    const weekday = dateObj.toLocaleDateString('en-US', {
+      weekday: 'long',
+    });
+    const month = dateObj.toLocaleDateString('en-US', { month: 'short' });
+
+    const tempMin = Math.round(
+      Math.min(...dayDataArray.map(i => i.main.temp_min))
+    );
+    const tempMax = Math.round(
+      Math.max(...dayDataArray.map(i => i.main.temp_max))
+    );
+
+    const iconClass = iconMap[weather[0].icon] || 'icon-sun';
+
+    forecastMarkup.push(`
+          <li class="forecast-item">
+            <p class="forecast-weekday">${weekday}</p>
+            <p class="forecast-date">${day} ${month}</p>
+            <svg>
+              <use href="${sprite}#${iconClass}"></use>
+            </svg>
+            <ul class="forecast-temp">
+              <li>
+                <p class="forecast-temp-title">min</p>
+                <p class="forecast-temp-value">${tempMin}&deg</p>
+              </li>
+              <li>
+                <p class="forecast-temp-title">max</p>
+                <p class="forecast-temp-value">${tempMax}&deg</p>
+              </li>
+            </ul>
+            <button type="button" class="forecast-button">more info</button>
+            </li>
+  `);
+  });
+
+  forecastFiveDays.innerHTML = forecastMarkup.join('');
+  forecastContainer.style.display = 'block';
+}
+
+export function clearForecastFiveDaysCards() {
+  if (!forecastCity || !forecastFiveDays) return;
+  forecastCity.textContent = '';
+  forecastFiveDays.innerHTML = '';
 }

@@ -32,28 +32,3 @@ body {
     min-width: 100%;
   }
 }
-
-/* RETINA */
-
-@media (min-resolution: 192dpi), (min-resolution: 2dppx) {
-  body {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
-      url('../img/hero_tablet_home@2x.jpg');
-  }
-}
-
-@media (min-width: 768px) and (min-resolution: 192dpi),
-  (min-width: 768px) and (min-resolution: 2dppx) {
-  body {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
-      url('../img/hero_tablet_home@2x.jpg');
-  }
-}
-
-@media (min-width: 1280px) and (min-resolution: 192dpi),
-  (min-width: 1280px) and (min-resolution: 2dppx) {
-  body {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
-      url('../img/desktop_home@2x.jpg');
-  }
-}

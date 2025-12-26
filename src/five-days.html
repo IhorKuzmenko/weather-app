@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="./css/styles.css" />
     <title>Weather</title>
   </head>
-  <body>
+  <body class="five-days-body">
     <header class="header">
       <div class="container">
         <div class="header-wrapper">
@@ -31,22 +31,30 @@
       </div>
     </header>
     <main>
-      <section class="home">
+      <section class="five-days">
         <div class="container">
-          <div class="weather-card"></div>
           <div class="buttons-wrapper">
-            <a class="button" href="#">Today</a>
-            <a class="button inactive" href="./five-days.html">5 days</a>
+            <a class="button inactive" href="./index.html">Today</a>
+            <a class="button" href="#">5 days</a>
           </div>
-          <div class="dektop-wrapper">
-            <div class="datetime-card"></div>
-            <div>
-              <blockquote class="home-quote">
-                Who cares about the clouds when we're together? Just sing a song
-                and bring the sunny weather.
-              </blockquote>
-              <p class="home-quote-author">Dale Evans</p>
-            </div>
+          <div class="forecast-container">
+            <div class="forecast-city"></div>
+            <ul class="forecast-5days"></ul>
+          </div>
+
+          <div class="button-container">
+            <svg>
+              <use
+                class="button-arrow-left"
+                href="./img/icons.svg#icon-arrow"
+              ></use>
+            </svg>
+            <svg>
+              <use
+                class="button-arrow-right"
+                href="./img/icons.svg#icon-arrow"
+              ></use>
+            </svg>
           </div>
         </div>
       </section>

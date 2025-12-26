@@ -30,3 +30,17 @@ export async function getWeatherByCoords(lat, lon) {
 
   return response.data;
 }
+
+export async function getForecastFiveDays(city) {
+  const searchParam = new URLSearchParams({
+    q: city,
+    appid: apiKey,
+    units: 'metric',
+  });
+
+  const response = await axios.get(
+    `https://api.openweathermap.org/data/2.5/forecast?${searchParam}`
+  );
+
+  return response.data;
+}

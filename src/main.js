@@ -1,14 +1,24 @@
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
-import { getWeatherData, getWeatherByCoords } from './js/weather-api';
+import {
+  getWeatherData,
+  getWeatherByCoords,
+  getForecastFiveDays,
+} from './js/weather-api';
 import {
   createWeatherCard,
   clearWeatherCard,
   clearDateInfoCard,
+  createForecastFiveDaysCards,
+  clearForecastFiveDaysCards,
+  setForecastCity,
 } from './js/render-function';
 
 const input = document.querySelector('.header-input');
+
+const isTodayPage = document.querySelector('.home') !== null;
+const isFiveDaysPage = document.querySelector('.five-days') !== null;
 
 function getDateInfo() {
   const now = new Date();
@@ -48,41 +58,79 @@ function formatSunTime(unix, timezone) {
   return new Date((unix + timezone) * 1000).toUTCString().slice(17, 22);
 }
 
-async function showWeatherByCoords(lat, lon) {
+async function updateWeather(cityOrCoords, saveToSession = false) {
+  let currentData, forecastData;
+
   try {
-    const data = await getWeatherByCoords(lat, lon);
+    if (typeof cityOrCoords === 'string') {
+      currentData = await getWeatherData(cityOrCoords);
+    } else {
+      currentData = await getWeatherByCoords(
+        cityOrCoords.lat,
+        cityOrCoords.lon
+      );
+    }
+    forecastData = await getForecastFiveDays(currentData.name);
+
+    if (saveToSession) {
+      sessionStorage.setItem('currentCity', currentData.name);
+    }
+  } catch (err) {
+    iziToast.show({
+      message: 'City not found or network error',
+      position: 'topRight',
+      timeout: 5000,
+    });
+    return;
+  }
+
+  if (isTodayPage) {
+    clearWeatherCard();
+    clearDateInfoCard();
+  }
+  if (isFiveDaysPage) {
+    clearForecastFiveDaysCards();
+  }
+
+  if (isTodayPage) {
     const dateInfo = getDateInfo();
 
     createWeatherCard({
-      city: data?.name,
-      country: data?.sys?.country,
-      temp: Math.round(data.main.temp),
-      tempMin: Math.round(data.main.temp_min),
-      tempMax: Math.round(data.main.temp_max),
-      icon: data.weather[0].icon,
+      city: currentData.name,
+      country: currentData.sys.country,
+      temp: Math.round(currentData.main.temp),
+      tempMin: Math.round(currentData.main.temp_min),
+      tempMax: Math.round(currentData.main.temp_max),
+      icon: currentData.weather[0].icon,
 
       day: dateInfo.day,
       weekday: dateInfo.weekday,
       month: dateInfo.month,
       time: dateInfo.time,
-      sunrise: formatSunTime(data.sys.sunrise, data.timezone),
-      sunset: formatSunTime(data.sys.sunset, data.timezone),
+      sunrise: formatSunTime(currentData.sys.sunrise, currentData.timezone),
+      sunset: formatSunTime(currentData.sys.sunset, currentData.timezone),
     });
-  } catch (err) {
-    iziToast.show({
-      message: 'Cannot get local weather',
-      position: 'topRight',
-      timeout: 5000,
-    });
+  }
+
+  if (isFiveDaysPage) {
+    setForecastCity(forecastData.city.name, forecastData.city.country);
+    createForecastFiveDaysCards(forecastData);
   }
 }
 
 window.addEventListener('load', () => {
+  const cityFromSession = sessionStorage.getItem('currentCity');
+
+  if (cityFromSession) {
+    updateWeather(cityFromSession);
+    return;
+  }
+
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       position => {
         const { latitude, longitude } = position.coords;
-        showWeatherByCoords(latitude, longitude);
+        updateWeather({ lat: latitude, lon: longitude });
       },
       () => {
         iziToast.show({
@@ -91,7 +139,7 @@ window.addEventListener('load', () => {
           timeout: 5000,
         });
 
-        showWeatherByCoords(50.4333, 30.5167);
+        updateWeather({ lat: 50.4333, lon: 30.5167 });
       }
     );
   } else {
@@ -101,7 +149,7 @@ window.addEventListener('load', () => {
       timeout: 5000,
     });
 
-    showWeatherByCoords(50.4333, 30.5167);
+    updateWeather({ lat: 50.4333, lon: 30.5167 });
   }
 });
 
@@ -118,35 +166,15 @@ input.addEventListener('keydown', async e => {
 
       return;
     }
+    await updateWeather(city, true);
 
-    clearWeatherCard();
-    clearDateInfoCard();
+    input.value = '';
+  }
+});
 
-    try {
-      const data = await getWeatherData(city);
-      const dateInfo = getDateInfo();
-
-      createWeatherCard({
-        city: data.name,
-        country: data.sys.country,
-        temp: Math.round(data.main.temp),
-        tempMin: Math.round(data.main.temp_min),
-        tempMax: Math.round(data.main.temp_max),
-        icon: data.weather[0].icon,
-
-        day: dateInfo.day,
-        weekday: dateInfo.weekday,
-        month: dateInfo.month,
-        time: dateInfo.time,
-        sunrise: formatSunTime(data.sys.sunrise, data.timezone),
-        sunset: formatSunTime(data.sys.sunset, data.timezone),
-      });
-    } catch (err) {
-      iziToast.show({
-        message: 'City not found',
-        position: 'topRight',
-        timeout: 5000,
-      });
-    }
+window.addEventListener('storage', e => {
+  if (e.key === 'currentCity') {
+    input.value = e.newValue;
+    updateWeather(e.newValue);
   }
 });
