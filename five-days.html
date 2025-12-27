@@ -11,9 +11,9 @@
     />
     <title>Weather</title>
     <script type="module" crossorigin src="/weather-app/assets/vendor-weOZHO9C.js"></script>
-    <script type="module" crossorigin src="/weather-app/assets/main-r_up99CB.js"></script>
-    <link rel="stylesheet" crossorigin href="/weather-app/assets/main-BFvf_Tfg.css">
+    <script type="module" crossorigin src="/weather-app/assets/main-1Iu1ga0a.js"></script>
     <link rel="stylesheet" crossorigin href="/weather-app/assets/vendor-DnveWo0P.css">
+    <link rel="stylesheet" crossorigin href="/weather-app/assets/main-BSbuOgdf.css">
   </head>
   <body class="five-days-body">
     <header class="header">
@@ -42,22 +42,19 @@
           </div>
           <div class="forecast-container">
             <div class="forecast-city"></div>
-            <ul class="forecast-5days"></ul>
-          </div>
-
-          <div class="button-container">
-            <svg>
-              <use
-                class="button-arrow-left"
-                href="/weather-app/assets/icons-D0JtYWc4.svg#icon-arrow"
-              ></use>
-            </svg>
-            <svg>
-              <use
-                class="button-arrow-right"
-                href="/weather-app/assets/icons-D0JtYWc4.svg#icon-arrow"
-              ></use>
-            </svg>
+            <div class="forecast-5days-wrapper">
+              <ul class="forecast-5days"></ul>
+            </div>
+            <div class="button-container">
+              <button
+                class="forecast-button-scroll forecast-button-left"
+                type="button"
+              ></button>
+              <button
+                class="forecast-button-scroll forecast-button-right"
+                type="button"
+              ></button>
+            </div>
           </div>
         </div>
       </section>
