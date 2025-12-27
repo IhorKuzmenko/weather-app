@@ -15,6 +15,8 @@ import {
   setForecastCity,
 } from './js/render-function';
 
+import initScroll from './js/scroll-function';
+
 const input = document.querySelector('.header-input');
 
 const isTodayPage = document.querySelector('.home') !== null;
@@ -115,6 +117,7 @@ async function updateWeather(cityOrCoords, saveToSession = false) {
   if (isFiveDaysPage) {
     setForecastCity(forecastData.city.name, forecastData.city.country);
     createForecastFiveDaysCards(forecastData);
+    initScroll();
   }
 }
 

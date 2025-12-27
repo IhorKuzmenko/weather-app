@@ -121,10 +121,10 @@ export function setForecastCity(cityName, countryCode) {
 
 export function createForecastFiveDaysCards(data) {
   if (!forecastFiveDays || !forecastContainer) return;
-  const daysMap = new Map(); // A Map is a collection of key-value pairs.
+  const daysMap = new Map();
 
   data.list.forEach(item => {
-    const date = item.dt_txt.split(' ')[0]; //We take only the date from the dt_txt string, ignoring the time.
+    const date = item.dt_txt.split(' ')[0];
 
     if (!daysMap.has(date)) {
       daysMap.set(date, []);
@@ -133,7 +133,7 @@ export function createForecastFiveDaysCards(data) {
     daysMap.get(date).push(item);
   });
 
-  const firstFiveDays = Array.from(daysMap.entries()).slice(0, 5); //Take the first 5 days
+  const firstFiveDays = Array.from(daysMap.entries()).slice(0, 5);
 
   const forecastMarkup = [];
 
@@ -161,7 +161,7 @@ export function createForecastFiveDaysCards(data) {
           <li class="forecast-item">
             <p class="forecast-weekday">${weekday}</p>
             <p class="forecast-date">${day} ${month}</p>
-            <svg>
+            <svg class="forecast-icon">
               <use href="${sprite}#${iconClass}"></use>
             </svg>
             <ul class="forecast-temp">

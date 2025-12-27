@@ -10,6 +10,125 @@
   margin-bottom: 60px;
 }
 
-.five-days {
-  padding-bottom: 32px;
+.forecast-container {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 32px 5px;
+  background-color: #10213680;
+  border-radius: 34px;
+}
+
+.forecast-city {
+  margin-bottom: 20px;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 100%;
+}
+
+.forecast-5days-wrapper {
+  overflow: hidden;
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 0 25px;
+}
+
+.forecast-5days {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.forecast-item {
+  flex: 0 0 calc((100% - 40px) / 3);
+}
+
+.forecast-weekday {
+  margin-bottom: 8px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 100%;
+  letter-spacing: 4%;
+  color: #ffffff55;
+}
+
+.forecast-date {
+  margin-bottom: 4px;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 4%;
+}
+
+.forecast-icon {
+  margin-bottom: 4px;
+  width: 35px;
+  height: 35px;
+}
+
+.forecast-temp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.forecast-temp li:first-child {
+  padding-right: 5px;
+  border-right: 1px solid #27384a;
+}
+
+.forecast-temp li:last-child {
+  padding-left: 5px;
+}
+
+.forecast-temp-title {
+  margin-bottom: 5px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 100%;
+  color: #767d85;
+}
+
+.forecast-temp-value {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 100%;
+  color: #ff6b09;
+}
+
+.forecast-button {
+  background-color: transparent;
+  border: transparent;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 100%;
+  color: #ffffff30;
+  border-bottom: 1px solid #ffffff30;
+}
+
+.button-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 auto;
+  width: 80px;
+}
+
+.forecast-button-scroll {
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  border: transparent;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.forecast-button-left {
+  background-image: url('../img/arrow-left.svg');
+}
+
+.forecast-button-right {
+  background-image: url('../img/arrow-right.svg');
 }
