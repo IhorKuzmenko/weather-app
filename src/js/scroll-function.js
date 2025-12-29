@@ -53,10 +53,11 @@ export function initCustomScrollbar() {
 
     scrollBar.style.opacity = '1';
 
-    const thumbWidth = Math.max((clientWidth / scrollWidth) * clientWidth, 30);
+    const barWidth = scrollBar.offsetWidth;
+    const thumbWidth = Math.max((clientWidth / scrollWidth) * barWidth, 30);
     const maxScroll = scrollWidth - clientWidth;
     const progress = maxScroll === 0 ? 0 : scrollLeft / maxScroll;
-    const maxThumbTravel = clientWidth - thumbWidth;
+    const maxThumbTravel = barWidth - thumbWidth;
     const thumbLeft = progress * maxThumbTravel;
 
     thumb.style.width = `${thumbWidth}px`;
