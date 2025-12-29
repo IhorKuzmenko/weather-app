@@ -13,9 +13,11 @@ import {
   createForecastFiveDaysCards,
   clearForecastFiveDaysCards,
   setForecastCity,
+  renderForecastHours,
+  clearForecastHours,
 } from './js/render-function';
 
-import initScroll from './js/scroll-function';
+import { initScroll } from './js/scroll-function';
 
 const input = document.querySelector('.header-input');
 
@@ -60,6 +62,8 @@ function formatSunTime(unix, timezone) {
   return new Date((unix + timezone) * 1000).toUTCString().slice(17, 22);
 }
 
+let lastForecastData = null;
+
 async function updateWeather(cityOrCoords, saveToSession = false) {
   let currentData, forecastData;
 
@@ -73,6 +77,7 @@ async function updateWeather(cityOrCoords, saveToSession = false) {
       );
     }
     forecastData = await getForecastFiveDays(currentData.name);
+    lastForecastData = forecastData;
 
     if (saveToSession) {
       sessionStorage.setItem('currentCity', currentData.name);
@@ -180,4 +185,39 @@ window.addEventListener('storage', e => {
     input.value = e.newValue;
     updateWeather(e.newValue);
   }
+});
+
+let activeForecastButton = null;
+
+document.addEventListener('click', e => {
+  const forecastHours = document.querySelector('.forecast-hours');
+  const button = e.target.closest('.forecast-button');
+
+  if (!button || !forecastHours || !lastForecastData) return;
+
+  const date = button.dataset.date;
+
+  if (!date) return;
+
+  if (activeForecastButton === button) {
+    clearForecastHours();
+    button.classList.remove('active');
+    activeForecastButton = null;
+    return;
+  }
+
+  if (activeForecastButton) {
+    activeForecastButton.classList.remove('active');
+  }
+
+  const hoursData = lastForecastData.list.filter(item => {
+    const itemDate = item.dt_txt.split(' ')[0];
+    return itemDate === date;
+  });
+
+  clearForecastHours();
+  renderForecastHours(hoursData);
+
+  button.classList.add('active');
+  activeForecastButton = button;
 });

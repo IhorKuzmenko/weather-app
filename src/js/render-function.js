@@ -1,5 +1,5 @@
 import sprite from '../img/icons.svg?url';
-
+import { initCustomScrollbar } from './scroll-function';
 const weatherCard = document.querySelector('.weather-card');
 const dateInfo = document.querySelector('.datetime-card');
 
@@ -174,7 +174,7 @@ export function createForecastFiveDaysCards(data) {
                 <p class="forecast-temp-value">${tempMax}&deg</p>
               </li>
             </ul>
-            <button type="button" class="forecast-button">more info</button>
+            <button type="button" class="forecast-button" data-date="${date}">more info</button>
             </li>
   `);
   });
@@ -187,4 +187,77 @@ export function clearForecastFiveDaysCards() {
   if (!forecastCity || !forecastFiveDays) return;
   forecastCity.textContent = '';
   forecastFiveDays.innerHTML = '';
+}
+
+const forecastHours = document.querySelector('.forecast-hours');
+
+export function renderForecastHours(data) {
+  if (!forecastHours) return;
+
+  const hoursMarkup = data.map(item => {
+    const dateObj = new Date(item.dt_txt);
+    const time = dateObj.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+    const temp = Math.round(item.main.temp);
+    const pressure = item.main.pressure;
+    const humidity = item.main.humidity;
+    const windSpeed = item.wind.speed;
+    const icon = item.weather[0].icon;
+
+    const iconClass = iconMap[icon] || 'icon-sun';
+
+    return `
+           <li class="forecast-hours-item">
+                <ul>
+                  <li class="forecast-hours-time">${time}</li>
+                  <li>
+                    <svg class="forecast-hours-icon">
+                      <use href="${sprite}#${iconClass}"></use>
+                    </svg>
+                  </li>
+                  <li class="forecast-hours-temp">${temp}&deg</li>
+                  <div class="forecast-hours-container">
+                  <li class="forecast-hours-wrap">
+                    <svg class="forecast-hours-img">
+                      <use href="${sprite}#icon-atmosphere"></use>
+                    </svg>
+                    <p class="forecast-hours-value">${pressure} mm</p>
+                  </li>
+                  <li class="forecast-hours-wrap">
+                    <svg class="forecast-hours-img">
+                      <use href="${sprite}#icon-humidity"></use>
+                    </svg>
+                    <p class="forecast-hours-value">${humidity}%</p>
+                  </li>
+                    <li class="forecast-hours-wrap">
+                    <svg class="forecast-hours-img">
+                      <use href="${sprite}#icon-wind"></use>
+                    </svg>
+                    <p class="forecast-hours-value">${windSpeed} m/s</p>
+                  </li>
+                  </div>
+                </ul>
+              </li>
+    `;
+  });
+
+  forecastHours.innerHTML = hoursMarkup.join('');
+  forecastHours.style.display = 'flex';
+
+  initCustomScrollbar();
+}
+
+export function clearForecastHours() {
+  if (!forecastHours) return;
+
+  forecastHours.innerHTML = '';
+  forecastHours.style.display = 'none';
+
+  const scrollBar = document.querySelector('.scroll-bar');
+  if (scrollBar) scrollBar.style.opacity = '0';
+
+  initCustomScrollbar();
 }

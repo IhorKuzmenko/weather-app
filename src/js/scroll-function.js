@@ -1,4 +1,4 @@
-export default function initScroll() {
+export function initScroll() {
   const wrapper = document.querySelector('.forecast-5days-wrapper');
   const list = document.querySelector('.forecast-5days');
   const btnLeft = document.querySelector('.forecast-button-left');
@@ -30,4 +30,41 @@ export default function initScroll() {
   toggleButtons();
 
   wrapper.scrollLeft = 0;
+}
+
+export function initCustomScrollbar() {
+  const wrapper = document.querySelector('.forecast-hours-wrapper');
+  const list = document.querySelector('.forecast-hours');
+  const scrollBar = document.querySelector('.scroll-bar');
+  const thumb = document.querySelector('.scroll-thumb');
+
+  if (!wrapper || !list || !scrollBar || !thumb) return;
+
+  function updateScrollbar() {
+    const scrollWidth = list.scrollWidth;
+    const clientWidth = wrapper.clientWidth;
+    const scrollLeft = wrapper.scrollLeft;
+
+    if (scrollWidth <= clientWidth + 10) {
+      scrollBar.style.opacity = '0';
+      thumb.style.width = '0';
+      return;
+    }
+
+    scrollBar.style.opacity = '1';
+
+    const thumbWidth = Math.max((clientWidth / scrollWidth) * clientWidth, 30);
+    const maxScroll = scrollWidth - clientWidth;
+    const progress = maxScroll === 0 ? 0 : scrollLeft / maxScroll;
+    const maxThumbTravel = clientWidth - thumbWidth;
+    const thumbLeft = progress * maxThumbTravel;
+
+    thumb.style.width = `${thumbWidth}px`;
+    thumb.style.left = `${thumbLeft}px`;
+  }
+
+  wrapper.addEventListener('scroll', updateScrollbar);
+  window.addEventListener('resize', updateScrollbar);
+
+  updateScrollbar();
 }
