@@ -15,6 +15,7 @@ import {
   setForecastCity,
   renderForecastHours,
   clearForecastHours,
+  renderForecastChart,
 } from './js/render-function';
 
 import { initScroll } from './js/scroll-function';
@@ -220,4 +221,31 @@ document.addEventListener('click', e => {
 
   button.classList.add('active');
   activeForecastButton = button;
+});
+
+const buttonShowChart = document.querySelector('.button-show-chart');
+const buttonShowChartContainer = document.querySelector(
+  '.chart-button-show-container'
+);
+const buttonHideChart = document.querySelector('.button-hide-chart');
+const forecastChartContainer = document.querySelector(
+  '.forecast-chart-container'
+);
+
+buttonShowChart.addEventListener('click', () => {
+  if (!buttonShowChart || !forecastChartContainer) return;
+  buttonShowChartContainer.style.display = 'none';
+  forecastChartContainer.style.display = 'flex';
+
+  requestAnimationFrame(() => {
+    if (lastForecastData) {
+      renderForecastChart(lastForecastData);
+    }
+  });
+});
+
+buttonHideChart.addEventListener('click', () => {
+  if (!buttonHideChart || !forecastChartContainer) return;
+  buttonShowChartContainer.style.display = 'flex';
+  forecastChartContainer.style.display = 'none';
 });

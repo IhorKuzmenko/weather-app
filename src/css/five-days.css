@@ -10,10 +10,13 @@
   margin-bottom: 60px;
 }
 
+.five-days {
+  padding-bottom: 32px;
+}
+
 .forecast-container {
   position: relative;
   text-align: center;
-  margin-bottom: 20px;
   padding: 32px 5px;
   background-color: #10213680;
   border-radius: 34px;
@@ -135,6 +138,12 @@
   background-image: url('../img/arrow-right.svg');
 }
 
+.forecast-container-inner,
+.scroll-bar-wrapper,
+.forecast-chart-container {
+  display: none;
+}
+
 .forecast-hours {
   align-items: center;
 }
@@ -217,7 +226,7 @@
 
 .scroll-bar-wrapper {
   position: absolute;
-  bottom: 8px;
+  bottom: 20px;
   left: 0;
   right: 0;
   height: 4px;
@@ -245,4 +254,80 @@
   border-radius: 2px;
   transition: width 0.2s ease, left 0.2s ease;
   min-width: 30px;
+}
+
+/* FORECAST-CHART */
+
+.chart-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  margin-top: 20px;
+}
+
+.button-show-chart {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  width: 75px;
+  height: 18px;
+  background-color: transparent;
+  border: transparent;
+  font-weight: 400px;
+  font-size: 14px;
+  line-height: 100%;
+  color: #ff6b09;
+  border-bottom: 1px solid #ff6b09;
+}
+
+.icon-container {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #ffffff20;
+}
+
+.button-chart-icon {
+  width: 8px;
+  height: 8px;
+  transform: rotate(90deg);
+}
+
+.button-hide-chart {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  width: 75px;
+  height: 18px;
+  background-color: transparent;
+  border: transparent;
+  font-weight: 400px;
+  font-size: 14px;
+  line-height: 100%;
+  color: #ff6b09;
+  border-bottom: 1px solid #ff6b09;
+}
+
+.button-chart-icon-up {
+  transform: rotate(-90deg);
+}
+
+.forecast-chart-container {
+  flex-direction: column;
+  margin-top: 37px;
+}
+
+.forecast-chart {
+  width: 100% !important;
+  height: 300px !important;
+  max-height: 100%;
 }
