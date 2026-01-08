@@ -324,10 +324,18 @@
 .forecast-chart-container {
   flex-direction: column;
   margin-top: 37px;
+  padding: 32px 11px;
+  background-color: #10213680;
+  border-radius: 34px;
+}
+
+.charts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-top: 10px;
 }
 
 .forecast-chart {
   width: 100% !important;
-  height: 300px !important;
-  max-height: 100%;
 }

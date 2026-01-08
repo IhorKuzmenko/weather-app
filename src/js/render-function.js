@@ -272,10 +272,15 @@ export function clearForecastHours() {
   initCustomScrollbar();
 }
 
-const forecastChart = document.querySelector('.forecast-chart');
+const canvasTemp = document.getElementById('chart-temp');
+const canvasHumidity = document.getElementById('chart-humidity');
+const canvasWind = document.getElementById('chart-wind');
+const canvasPressure = document.getElementById('chart-pressure');
+
+let chartTemp, chartHumidity, chartWind, chartPressure;
 
 export function renderForecastChart(forecastData) {
-  if (!forecastChart || !forecastData) return;
+  if (!forecastData) return;
 
   const daysMap = new Map();
 
@@ -302,7 +307,7 @@ export function renderForecastChart(forecastData) {
     return Math.round(hum.reduce((a, b) => a + b) / hum.length);
   });
 
-  const avgWindSpeed = firstFiveDays.map(([_, dayData]) => {
+  const avgWind = firstFiveDays.map(([_, dayData]) => {
     const winds = dayData.map(i => i.wind.speed);
     return (winds.reduce((a, b) => a + b) / winds.length).toFixed(1);
   });
@@ -312,11 +317,12 @@ export function renderForecastChart(forecastData) {
     return Math.round(press.reduce((a, b) => a + b) / press.length);
   });
 
-  if (forecastChart.chartInstance) {
-    forecastChart.chartInstance.destroy();
-  }
+  if (chartTemp) chartTemp.destroy();
+  if (chartHumidity) chartHumidity.destroy();
+  if (chartWind) chartWind.destroy();
+  if (chartPressure) chartPressure.destroy();
 
-  forecastChart.chartInstance = new Chart(forecastChart, {
+  chartTemp = new Chart(canvasTemp, {
     type: 'line',
     data: {
       labels,
@@ -325,111 +331,224 @@ export function renderForecastChart(forecastData) {
           label: 'Temperature, C°',
           data: avgTemps,
           borderColor: '#ff6b09',
-          backgroundColor: 'rgba(255, 107, 9, 0.1)',
-          borderWidth: 3,
-          pointBackgroundColor: '#ff6b09',
-          pointRadius: 5,
+          backgroundColor: '#ff6b09',
           tension: 0.4,
-          yAxisID: 'y-temp',
-        },
-        {
-          label: 'Humidity, %',
-          data: avgHumidity,
-          borderColor: '#007bff',
-          backgroundColor: 'rgba(0, 123, 255, 0.1)',
-          borderWidth: 3,
-          pointBackgroundColor: '#007bff',
-          pointRadius: 5,
-          tension: 0.4,
-          yAxisID: 'y-percent',
-        },
-        {
-          label: 'Wind Speed, m/s',
-          data: avgWindSpeed,
-          borderColor: '#00e396',
-          backgroundColor: 'rgba(0, 227, 150, 0.1)',
-          borderWidth: 3,
-          pointBackgroundColor: '#00e396',
-          pointRadius: 5,
-          tension: 0.4,
-          yAxisID: 'y-speed',
-        },
-        {
-          label: 'Atmosphere Pressure, mm',
-          data: avgPressure,
-          borderColor: '#feb019',
-          backgroundColor: 'rgba(254, 176, 25, 0.1)',
-          borderWidth: 3,
-          pointBackgroundColor: '#feb019',
-          pointRadius: 5,
-          tension: 0.4,
-          yAxisID: 'y-pressure',
         },
       ],
     },
     options: {
       responsive: true,
-      maintainAspectRatio: false,
-      interaction: {
-        mode: 'index',
-        intersect: false,
-      },
       plugins: {
         legend: {
           display: true,
-          position: 'top',
-          align: 'start',
           labels: {
-            color: '#ffffff',
-            font: { size: 14, family: 'Lato' },
+            color: '#FFFFFF54',
+            font: {
+              weight: 400,
+              size: 14,
+            },
             padding: 20,
-            usePointStyle: true,
-            pointStyle: 'line',
+            boxWidth: 12,
+            boxHeight: 12,
           },
-        },
-        tooltip: {
-          backgroundColor: 'rgba(16, 33, 54, 0.95)',
-          titleColor: '#ff6b09',
-          bodyColor: '#ffffff',
-          cornerRadius: 12,
         },
       },
       scales: {
         x: {
-          ticks: { color: '#ffffff', font: { size: 14 } },
-          grid: { display: false },
-          border: { display: false },
-        },
-        'y-temp': {
-          type: 'linear',
-          position: 'left',
-          title: { display: false },
           ticks: {
-            color: '#ff6b09',
-            callback: value => value + '°',
+            color: '#FFFFFF54',
+            font: {
+              size: 14,
+            },
           },
-          grid: { display: false },
+          grid: {
+            color: '#FFFFFF20',
+          },
         },
-        'y-percent': {
-          type: 'linear',
-          position: 'right',
-          min: 0,
-          max: 100,
+        y: {
           ticks: {
-            color: '#007bff',
-            callback: value => value + '%',
+            color: '#FFFFFF54',
+            font: {
+              size: 14,
+            },
           },
-          grid: { display: false },
+          grid: {
+            color: '#FFFFFF20',
+          },
         },
-        'y-speed': {
-          type: 'linear',
-          position: 'right',
-          display: false,
+      },
+    },
+  });
+
+  chartHumidity = new Chart(canvasHumidity, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Humidity, %',
+          data: avgHumidity,
+          borderColor: '#0906EB',
+          backgroundColor: '#0906EB',
+          tension: 0.4,
         },
-        'y-pressure': {
-          type: 'linear',
-          position: 'right',
-          display: false,
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: true,
+          labels: {
+            color: '#FFFFFF54',
+            font: {
+              weight: 400,
+              size: 14,
+            },
+            padding: 20,
+            boxWidth: 12,
+            boxHeight: 12,
+          },
+        },
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: '#FFFFFF54',
+            font: {
+              size: 14,
+            },
+          },
+          grid: {
+            color: '#FFFFFF20',
+          },
+        },
+        y: {
+          ticks: {
+            color: '#FFFFFF54',
+            font: {
+              size: 14,
+            },
+          },
+          grid: {
+            color: '#FFFFFF20',
+          },
+        },
+      },
+    },
+  });
+
+  chartWind = new Chart(canvasWind, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Wind speed, m/s',
+          data: avgWind,
+          borderColor: '#EA9A05',
+          backgroundColor: '#EA9A05',
+          tension: 0.4,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: true,
+          labels: {
+            color: '#FFFFFF54',
+            font: {
+              weight: 400,
+              size: 14,
+            },
+            padding: 20,
+            boxWidth: 12,
+            boxHeight: 12,
+          },
+        },
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: '#FFFFFF54',
+            font: {
+              size: 14,
+            },
+          },
+          grid: {
+            color: '#FFFFFF20',
+          },
+        },
+        y: {
+          ticks: {
+            color: '#FFFFFF54',
+            font: {
+              size: 14,
+            },
+          },
+          grid: {
+            color: '#FFFFFF20',
+          },
+        },
+      },
+    },
+  });
+
+  chartPressure = new Chart(canvasPressure, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Pressure, mm',
+          data: avgPressure,
+          borderColor: '#067806',
+          backgroundColor: '#067806',
+          tension: 0.4,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: true,
+          labels: {
+            color: '#FFFFFF54',
+            font: {
+              weight: 400,
+              size: 14,
+            },
+            padding: 20,
+            boxWidth: 12,
+            boxHeight: 12,
+          },
+        },
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: '#FFFFFF54',
+            font: {
+              size: 14,
+            },
+          },
+          grid: {
+            color: '#FFFFFF20',
+          },
+        },
+        y: {
+          ticks: {
+            color: '#FFFFFF54',
+            font: {
+              size: 14,
+            },
+          },
+          grid: {
+            color: '#FFFFFF20',
+          },
         },
       },
     },
