@@ -79,7 +79,7 @@
 
 .forecast-temp li:first-child {
   padding-right: 5px;
-  border-right: 1px solid #27384a;
+  border-right: 1px solid #ffffff20;
 }
 
 .forecast-temp li:last-child {
@@ -96,7 +96,7 @@
 
 .forecast-temp-value {
   font-weight: 400;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 100%;
   color: #ff6b09;
 }
@@ -107,8 +107,8 @@
   font-weight: 700;
   font-size: 12px;
   line-height: 100%;
-  color: #ffffff30;
-  border-bottom: 1px solid #ffffff30;
+  color: #ffffff54;
+  border-bottom: 1px solid #ffffff54;
 }
 
 .button-container {
@@ -146,6 +146,10 @@
 
 .forecast-hours {
   align-items: center;
+  justify-content: flex-start;
+  gap: 30px;
+  min-width: max-content;
+  transition: transform 0.3s ease;
 }
 
 .forecast-hours-item {
@@ -153,13 +157,6 @@
   padding: 20px 21px;
   border: 2px solid #ffffff20;
   border-radius: 25px;
-}
-
-.forecast-hours {
-  justify-content: flex-start;
-  gap: 30px;
-  min-width: max-content;
-  transition: transform 0.3s ease;
 }
 
 .forecast-hours-time {
@@ -186,6 +183,7 @@
 
 .forecast-hours-container {
   display: flex;
+  align-items: center;
   flex-direction: column;
   row-gap: 10px;
 }
@@ -255,8 +253,6 @@
   transition: width 0.2s ease, left 0.2s ease;
   min-width: 30px;
 }
-
-/* FORECAST-CHART */
 
 .chart-button-container {
   display: flex;
@@ -338,4 +334,203 @@
 
 .forecast-chart {
   width: 100% !important;
+}
+
+/* FOR TABLET */
+
+@media (min-width: 768px) {
+  .header {
+    margin-bottom: 32px;
+  }
+
+  .forecast-container {
+    padding: 40px 20px;
+  }
+
+  .forecast-city {
+    margin-bottom: 24px;
+    font-size: 28px;
+    letter-spacing: 4%;
+  }
+
+  .forecast-5days-wrapper {
+    overflow: visible;
+    margin-bottom: 40px;
+    padding: 0 52px;
+  }
+
+  .forecast-5days {
+    gap: 24px;
+  }
+
+  .forecast-item {
+    flex: 0 0 calc((100% - 96px) / 5);
+  }
+
+  .forecast-weekday {
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+
+  .forecast-date {
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
+
+  .forecast-icon {
+    margin-bottom: 10px;
+  }
+
+  .forecast-temp {
+    margin-bottom: 16px;
+  }
+
+  .forecast-temp li:first-child {
+    padding-right: 10px;
+  }
+
+  .forecast-temp li:last-child {
+    padding-left: 10px;
+  }
+
+  .forecast-temp-title {
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+
+  .forecast-temp-value {
+    font-size: 18px;
+  }
+
+  .forecast-button {
+    font-size: 14px;
+  }
+
+  .button-container {
+    display: none;
+  }
+}
+
+/* FOR DESKTOP */
+
+@media (min-width: 1280px) {
+  .five-days-body {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+      url('../img/desktop_five_days.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+  }
+
+  .container-desktop-five-days {
+    padding: 0 16px;
+  }
+
+  .buttons-wrapper-five-days {
+    margin-bottom: 26px;
+  }
+
+  .forecast-container {
+    padding: 40px 43px;
+  }
+
+  .forecast-city {
+    margin-bottom: 40px;
+    font-size: 28px;
+    letter-spacing: 4%;
+  }
+
+  .forecast-5days {
+    gap: 32px;
+  }
+
+  .forecast-item {
+    flex: 0 0 calc((100% - 128px) / 5);
+  }
+
+  .forecast-weekday {
+    font-size: 18px;
+  }
+
+  .forecast-date {
+    margin-bottom: 20px;
+    font-size: 25px;
+  }
+
+  .forecast-icon {
+    margin-bottom: 25px;
+  }
+
+  .forecast-temp li:first-child {
+    padding-right: 17px;
+  }
+
+  .forecast-temp li:last-child {
+    padding-left: 17px;
+  }
+
+  .forecast-temp-title {
+    margin-bottom: 8px;
+    font-size: 18px;
+  }
+
+  .forecast-temp-value {
+    font-size: 25px;
+  }
+
+  .forecast-hours-wrapper {
+    overflow: visible;
+    padding-bottom: 0;
+  }
+
+  .forecast-hours {
+    min-width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .forecast-hours-item {
+    flex: 0 0 calc((100% - 48px) / 4);
+  }
+
+  .scroll-bar-wrapper {
+    display: none !important;
+  }
+
+  .forecast-hours-time {
+    margin-bottom: 18px;
+  }
+
+  .forecast-hours-temp {
+    margin-bottom: 18px;
+    font-size: 25px;
+  }
+
+  .forecast-chart-container {
+    padding: 20px 107px;
+  }
+}
+
+@media (min-resolution: 192dpi), (min-resolution: 2dppx) {
+  body {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+      url('../img/tablet_five_days@2x.jpg');
+  }
+}
+
+@media (min-width: 768px) and (min-resolution: 192dpi),
+  (min-width: 768px) and (min-resolution: 2dppx) {
+  body {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+      url('../img/tablet_five_days@2x.jpg');
+  }
+}
+
+@media (min-width: 1280px) and (min-resolution: 192dpi),
+  (min-width: 1280px) and (min-resolution: 2dppx) {
+  body {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+      url('../img/desktop_five_days@2x.jpg');
+  }
 }

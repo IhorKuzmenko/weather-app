@@ -232,20 +232,22 @@ const forecastChartContainer = document.querySelector(
   '.forecast-chart-container'
 );
 
-buttonShowChart.addEventListener('click', () => {
-  if (!buttonShowChart || !forecastChartContainer) return;
-  buttonShowChartContainer.style.display = 'none';
-  forecastChartContainer.style.display = 'flex';
+if (buttonShowChart && forecastChartContainer && buttonShowChartContainer) {
+  buttonShowChart.addEventListener('click', () => {
+    if (!buttonShowChart || !forecastChartContainer) return;
+    buttonShowChartContainer.style.display = 'none';
+    forecastChartContainer.style.display = 'flex';
 
-  requestAnimationFrame(() => {
-    if (lastForecastData) {
-      renderForecastChart(lastForecastData);
-    }
+    requestAnimationFrame(() => {
+      if (lastForecastData) {
+        renderForecastChart(lastForecastData);
+      }
+    });
   });
-});
 
-buttonHideChart.addEventListener('click', () => {
-  if (!buttonHideChart || !forecastChartContainer) return;
-  buttonShowChartContainer.style.display = 'flex';
-  forecastChartContainer.style.display = 'none';
-});
+  buttonHideChart.addEventListener('click', () => {
+    if (!buttonHideChart || !forecastChartContainer) return;
+    buttonShowChartContainer.style.display = 'flex';
+    forecastChartContainer.style.display = 'none';
+  });
+}
