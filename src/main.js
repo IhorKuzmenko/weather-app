@@ -22,8 +22,13 @@ import { initScroll } from './js/scroll-function';
 
 const input = document.querySelector('.header-input');
 
+/**isTodayPage and isFiveDaysPage are flags to know which page we are on (current weather or 5-day forecast). */
+
 const isTodayPage = document.querySelector('.home') !== null;
 const isFiveDaysPage = document.querySelector('.five-days') !== null;
+
+/**getDateInfo() - Returns an object with the current date and time,
+ * formatting the day, month, day of the week, and time. */
 
 function getDateInfo() {
   const now = new Date();
@@ -45,6 +50,8 @@ function getDateInfo() {
   };
 }
 
+/**Adds an English suffix to the day (st, nd, rd, th) to display the date beautifully. */
+
 function getOrdinalSuffix(day) {
   if (day > 3 && day < 21) return 'th';
   switch (day % 10) {
@@ -58,6 +65,8 @@ function getOrdinalSuffix(day) {
       return 'th';
   }
 }
+
+/**Converts sunrise/sunset times from UNIX + timezone to convenient HH:MM format */
 
 function formatSunTime(unix, timezone) {
   return new Date((unix + timezone) * 1000).toUTCString().slice(17, 22);
@@ -127,6 +136,8 @@ async function updateWeather(cityOrCoords, saveToSession = false) {
   }
 }
 
+/**Page loading - autostart */
+
 window.addEventListener('load', () => {
   const cityFromSession = sessionStorage.getItem('currentCity');
 
@@ -162,6 +173,8 @@ window.addEventListener('load', () => {
   }
 });
 
+/**City input field */
+
 input.addEventListener('keydown', async e => {
   if (e.key === 'Enter') {
     const city = input.value.trim();
@@ -181,6 +194,8 @@ input.addEventListener('keydown', async e => {
   }
 });
 
+/**Storage event */
+
 window.addEventListener('storage', e => {
   if (e.key === 'currentCity') {
     input.value = e.newValue;
@@ -188,17 +203,21 @@ window.addEventListener('storage', e => {
   }
 });
 
-let activeForecastButton = null;
+let activeForecastButton = null; //Stores the currently active "more info" button in the 5-day forecast.
+
+//Processing clicks on the "more info" buttons in the 5-day forecast
 
 document.addEventListener('click', e => {
   const forecastHours = document.querySelector('.forecast-hours');
-  const button = e.target.closest('.forecast-button');
+  const button = e.target.closest('.forecast-button'); //We check whether the click was on the "more info" button or inside it.
 
   if (!button || !forecastHours || !lastForecastData) return;
 
-  const date = button.dataset.date;
+  const date = button.dataset.date; //The date to which the button is linked.
 
   if (!date) return;
+
+  /**Closing the active button */
 
   if (activeForecastButton === button) {
     clearForecastHours();
@@ -207,10 +226,13 @@ document.addEventListener('click', e => {
     return;
   }
 
+  /**Switch to another button */
+
   if (activeForecastButton) {
     activeForecastButton.classList.remove('active');
   }
 
+  /**Filtering data by a selected date */
   const hoursData = lastForecastData.list.filter(item => {
     const itemDate = item.dt_txt.split(' ')[0];
     return itemDate === date;

@@ -27,6 +27,25 @@ const iconMap = {
   '50n': 'icon-cloudy',
 };
 
+/**
+ * TODAY PAGE
+ * Renders the current weather card in the DOM.
+ *
+ * @param {Object} data - Weather data object.
+ * @param {string} data.city - City name.
+ * @param {string} data.country - Country code.
+ * @param {number} data.temp - Current temperature.
+ * @param {number} data.tempMin - Minimum temperature.
+ * @param {number} data.tempMax - Maximum temperature.
+ * @param {string} data.icon - Weather icon code.
+ * @param {string} data.day - Day of the month.
+ * @param {string} data.weekday - Weekday name.
+ * @param {string} data.month - Month name.
+ * @param {string} data.time - Current time.
+ * @param {string} data.sunrise - Sunrise time.
+ * @param {string} data.sunset - Sunset time.
+ */
+
 export function createWeatherCard(data) {
   if (!weatherCard || !dateInfo) return;
 
@@ -101,15 +120,23 @@ export function createWeatherCard(data) {
   dateInfo.style.display = 'block';
 }
 
+/**
+ * Clears the current weather card from the DOM.
+ */
+
 export function clearWeatherCard() {
   weatherCard.innerHTML = '';
 }
+
+/**
+ * Clears the date/time information card from the DOM.
+ */
 
 export function clearDateInfoCard() {
   dateInfo.innerHTML = '';
 }
 
-//FIVE DAYS
+/**FIVE DAYS PAGE*/
 
 const forecastContainer = document.querySelector('.forecast-container');
 const forecastCity = forecastContainer
@@ -117,13 +144,26 @@ const forecastCity = forecastContainer
   : null;
 const forecastFiveDays = document.querySelector('.forecast-5days');
 
+/** Sets the city name in the forecast section.
+ *
+ * @param {string} cityName - Name of the city.
+ * @param {string} countryCode - Country code.
+ */
+
 export function setForecastCity(cityName, countryCode) {
   if (!forecastCity) return;
   forecastCity.textContent = `${cityName}, ${countryCode}`;
 }
 
+/**
+ * Creates forecast cards for the next 5 days.
+ *
+ * @param {Object} data - Forecast data object returned from OpenWeatherMap.
+ */
+
 export function createForecastFiveDaysCards(data) {
   if (!forecastFiveDays || !forecastContainer) return;
+
   const daysMap = new Map();
 
   data.list.forEach(item => {
@@ -136,13 +176,17 @@ export function createForecastFiveDaysCards(data) {
     daysMap.get(date).push(item);
   });
 
+  /** Array of 5 elements, each element is a [date, array of data per day].
+   * date — a date string, such as "2026-01-12".
+   * dayDataArray — an array of all weather objects for this day (every 3 hours).*/
+
   const firstFiveDays = Array.from(daysMap.entries()).slice(0, 5);
 
   const forecastMarkup = [];
 
   firstFiveDays.forEach(([date, dayDataArray]) => {
-    const firstItem = dayDataArray[0];
-    const { dt_txt, main, weather } = firstItem;
+    const firstItem = dayDataArray[0]; //firstItem is the first weather object in the dayDataArray.
+    const { dt_txt, main, weather } = firstItem; //(dt_txt) - date/time; main - the temperature, pressure, humidity, etc. for this object; weather — an array with a description of the weather condition (rain, snow, cloudy) and an icon code.
 
     const dateObj = new Date(dt_txt);
     const day = dateObj.getDate();
@@ -186,6 +230,10 @@ export function createForecastFiveDaysCards(data) {
   forecastContainer.style.display = 'block';
 }
 
+/**
+ * Clears the 5-day forecast cards and city name.
+ */
+
 export function clearForecastFiveDaysCards() {
   if (!forecastCity || !forecastFiveDays) return;
   forecastCity.textContent = '';
@@ -193,6 +241,10 @@ export function clearForecastFiveDaysCards() {
 }
 
 const forecastHours = document.querySelector('.forecast-hours');
+
+/**
+ * Renders hourly forecast cards.
+ */
 
 export function renderForecastHours(data) {
   if (!forecastHours) return;
@@ -260,6 +312,10 @@ export function renderForecastHours(data) {
   initCustomScrollbar();
 }
 
+/**
+ * Clears the hourly forecast cards.
+ */
+
 export function clearForecastHours() {
   if (!forecastHours) return;
 
@@ -279,6 +335,11 @@ const canvasPressure = document.getElementById('chart-pressure');
 
 let chartTemp, chartHumidity, chartWind, chartPressure;
 
+/**
+ * Renders line charts for temperature, humidity, wind, and pressure
+ * based on the 5-day forecast data.
+ */
+
 export function renderForecastChart(forecastData) {
   if (!forecastData) return;
 
@@ -291,6 +352,10 @@ export function renderForecastChart(forecastData) {
   });
 
   const firstFiveDays = Array.from(daysMap.entries()).slice(0, 5);
+
+  /**
+   * Generating labels for graphs
+   */
 
   const labels = firstFiveDays.map(([date]) => {
     const d = new Date(date);
