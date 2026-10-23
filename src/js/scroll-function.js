@@ -1,12 +1,28 @@
-let scrollInitialized = false; //A flag that prevents initScroll() from being run twice and the same event handlers from being attached to buttons.
+let scrollInitialized = false;
+let scrollbarInitialized = false;
+
+let updateForecastButtons = null;
+let updateHourlyScrollbar = null;
 
 /**
- * Initializes horizontal scrolling for the 5-day forecast list
- * with left and right buttons.
- *
- * Buttons will be disabled (opacity 0.3) when scrolling is at the start or end.
+ * Schedules a visual update once per animation frame.
  */
+function createFrameUpdater(callback) {
+  let frameId = null;
 
+  return () => {
+    if (frameId !== null) return;
+
+    frameId = requestAnimationFrame(() => {
+      frameId = null;
+      callback();
+    });
+  };
+}
+
+/**
+ * Initializes horizontal scrolling for the 5-day forecast.
+ */
 export function initScroll() {
   const wrapper = document.querySelector('.forecast-5days-wrapper');
   const list = document.querySelector('.forecast-5days');
@@ -14,53 +30,86 @@ export function initScroll() {
   const btnRight = document.querySelector('.forecast-button-right');
 
   if (!wrapper || !list || !btnLeft || !btnRight) return;
-  if (scrollInitialized) return;
+
+  if (scrollInitialized) {
+    wrapper.scrollLeft = 0;
+    updateForecastButtons?.();
+    return;
+  }
 
   scrollInitialized = true;
 
-  /** Calculate the element's width and scroll step */
+  function getScrollAmount() {
+    const firstItem = list.querySelector('.forecast-item');
 
-  const itemWidth = list.querySelector('.forecast-item')?.offsetWidth || 0;
-  const gap = parseInt(getComputedStyle(list).gap) || 0; //getComputedStyle(list) – Gets all the CSS styles of the list element as an object.
-  const scrollAmount = itemWidth + gap; //Summarizes the width of an element + the space between elements.
+    if (!firstItem) return 0;
 
-  /**When the right arrow key is clicked, the wrapper container scrolls by scrollAmount pixels.
-   * behavior: 'smooth' makes scrolling smooth. */
+    const styles = getComputedStyle(list);
+    const gap = parseFloat(styles.columnGap) || 0;
 
-  btnRight.addEventListener('click', () => {
-    wrapper.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-  });
-
-  /**When the left arrow key is clicked, the wrapper container scrolls by scrollAmount pixels.
-   * behavior: 'smooth' makes scrolling smooth. */
-
-  btnLeft.addEventListener('click', () => {
-    wrapper.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-  });
-
-  function toggleButtons() {
-    btnLeft.style.opacity = wrapper.scrollLeft > 0 ? '1' : '0.3';
-    btnRight.style.opacity =
-      wrapper.scrollLeft + wrapper.clientWidth >= list.scrollWidth
-        ? '0.3'
-        : '1';
+    return firstItem.getBoundingClientRect().width + gap;
   }
 
-  wrapper.addEventListener('scroll', toggleButtons);
-  toggleButtons();
+  function updateButtons() {
+    const maxScroll = Math.max(0, wrapper.scrollWidth - wrapper.clientWidth);
+
+    const atStart = wrapper.scrollLeft <= 1;
+    const atEnd = wrapper.scrollLeft >= maxScroll - 1;
+
+    btnLeft.disabled = atStart;
+    btnRight.disabled = atEnd;
+
+    btnLeft.setAttribute('aria-disabled', String(atStart));
+    btnRight.setAttribute('aria-disabled', String(atEnd));
+
+    btnLeft.style.opacity = atStart ? '0.3' : '1';
+    btnRight.style.opacity = atEnd ? '0.3' : '1';
+  }
+
+  updateForecastButtons = createFrameUpdater(updateButtons);
+
+  btnRight.addEventListener('click', () => {
+    const amount = getScrollAmount();
+
+    if (!amount) return;
+
+    wrapper.scrollBy({
+      left: amount,
+      behavior: 'smooth',
+    });
+  });
+
+  btnLeft.addEventListener('click', () => {
+    const amount = getScrollAmount();
+
+    if (!amount) return;
+
+    wrapper.scrollBy({
+      left: -amount,
+      behavior: 'smooth',
+    });
+  });
+
+  wrapper.addEventListener('scroll', updateForecastButtons, {
+    passive: true,
+  });
+
+  if (typeof ResizeObserver !== 'undefined') {
+    const observer = new ResizeObserver(updateForecastButtons);
+
+    observer.observe(wrapper);
+    observer.observe(list);
+  } else {
+    window.addEventListener('resize', updateForecastButtons);
+  }
 
   wrapper.scrollLeft = 0;
+  updateForecastButtons();
 }
 
-let scrollbarInitialized = false; //A flag that prevents initCustomScrollbar() from being run twice and the same event handlers from being attached to buttons.
-
 /**
- * Initializes a custom horizontal scrollbar for the hourly forecast list.
- *
- * Updates the scrollbar thumb position and width based on scroll progress
- * and hides the scrollbar if the content fits the wrapper.
+ * Initializes the custom scrollbar for hourly forecasts.
  */
-
 export function initCustomScrollbar() {
   const wrapper = document.querySelector('.forecast-hours-wrapper');
   const list = document.querySelector('.forecast-hours');
@@ -68,39 +117,74 @@ export function initCustomScrollbar() {
   const thumb = document.querySelector('.scroll-thumb');
 
   if (!wrapper || !list || !scrollBar || !thumb) return;
-  if (scrollbarInitialized) return;
+
+  if (scrollbarInitialized) {
+    updateHourlyScrollbar?.();
+    return;
+  }
+
   scrollbarInitialized = true;
 
   function updateScrollbar() {
-    const scrollWidth = list.scrollWidth; //The full width of all list items, including the invisible part.
-    const clientWidth = wrapper.clientWidth; //The width of the visible area (wrapper).
-    const scrollLeft = wrapper.scrollLeft; //Current horizontal scroll offset.
+    const scrollWidth = wrapper.scrollWidth;
+    const clientWidth = wrapper.clientWidth;
+    const scrollLeft = wrapper.scrollLeft;
 
-    /**Hide the scrollbar if the list fits */
-
-    if (scrollWidth <= clientWidth + 10) {
+    if (!clientWidth || scrollWidth <= clientWidth + 1) {
       scrollBar.style.opacity = '0';
-      thumb.style.width = '0';
+      thumb.style.width = '0px';
+      thumb.style.left = '0px';
       return;
     }
 
+    const barWidth = scrollBar.clientWidth;
+
+    if (!barWidth) return;
+
+    const maxScroll = scrollWidth - clientWidth;
+
+    const thumbWidth = Math.min(
+      barWidth,
+      Math.max((clientWidth / scrollWidth) * barWidth, 30)
+    );
+
+    const progress = Math.min(1, Math.max(0, scrollLeft / maxScroll));
+
+    const maxThumbTravel = barWidth - thumbWidth;
+    const thumbLeft = progress * maxThumbTravel;
+
     scrollBar.style.opacity = '1';
-
-    /**Calculating the width and position of a slider */
-
-    const barWidth = scrollBar.offsetWidth; //Scroll bar width (in pixels).
-    const thumbWidth = Math.max((clientWidth / scrollWidth) * barWidth, 30); //The width of the slider. Calculated proportionally to the visible area
-    const maxScroll = scrollWidth - clientWidth; //Maximum list offset (how far you can scroll to the right).
-    const progress = maxScroll === 0 ? 0 : scrollLeft / maxScroll; //Scroll percentage (0 to 1).
-    const maxThumbTravel = barWidth - thumbWidth; //The maximum distance the slider can move.
-    const thumbLeft = progress * maxThumbTravel; //The position of the slider depending on the current scroll.
-
     thumb.style.width = `${thumbWidth}px`;
     thumb.style.left = `${thumbLeft}px`;
   }
 
-  wrapper.addEventListener('scroll', updateScrollbar); //When scrolling the list, we update the slider position.
-  window.addEventListener('resize', updateScrollbar); //When changing the window size (resize), we recalculate the width of the slider so that everything remains proportional.
+  updateHourlyScrollbar = createFrameUpdater(updateScrollbar);
 
-  updateScrollbar();
+  wrapper.addEventListener('scroll', updateHourlyScrollbar, {
+    passive: true,
+  });
+
+  if (typeof ResizeObserver !== 'undefined') {
+    const observer = new ResizeObserver(updateHourlyScrollbar);
+
+    observer.observe(wrapper);
+    observer.observe(list);
+    observer.observe(scrollBar);
+  } else {
+    window.addEventListener('resize', updateHourlyScrollbar);
+  }
+
+  updateHourlyScrollbar();
+}
+
+/**
+ * Resets the hourly forecast scroll position.
+ */
+export function resetHourlyScroll() {
+  const wrapper = document.querySelector('.forecast-hours-wrapper');
+
+  if (!wrapper) return;
+
+  wrapper.scrollLeft = 0;
+  updateHourlyScrollbar?.();
 }

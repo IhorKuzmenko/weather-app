@@ -1,12 +1,19 @@
+/* =========================================
+   FIVE DAYS PAGE
+========================================= */
+
 .five-days-body {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+  min-height: 100vh;
+  background-color: #102136;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
     url('../img/tablet_five_days.jpg');
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
 }
 
-.header {
+.five-days-body .header {
   margin-bottom: 60px;
 }
 
@@ -14,60 +21,75 @@
   padding-bottom: 32px;
 }
 
+/* =========================================
+   FORECAST CONTAINER
+========================================= */
+
 .forecast-container {
   position: relative;
-  text-align: center;
   padding: 32px 5px;
-  background-color: #10213680;
   border-radius: 34px;
+  background-color: rgba(16, 33, 54, 0.5);
+  text-align: center;
 }
 
 .forecast-city {
   margin-bottom: 20px;
   font-weight: 700;
   font-size: 18px;
-  line-height: 100%;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
 }
 
+/* =========================================
+   FIVE-DAY FORECAST
+========================================= */
+
 .forecast-5days-wrapper {
-  overflow: hidden;
   width: 100%;
   margin-bottom: 20px;
   padding: 0 25px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.forecast-5days-wrapper::-webkit-scrollbar {
+  display: none;
 }
 
 .forecast-5days {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 20px;
 }
 
 .forecast-item {
   flex: 0 0 calc((100% - 40px) / 3);
+  min-width: 0;
 }
 
 .forecast-weekday {
   margin-bottom: 8px;
-  font-weight: 400;
   font-size: 12px;
-  line-height: 100%;
-  letter-spacing: 4%;
-  color: #ffffff55;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  color: #d0d5dc;
 }
 
 .forecast-date {
   margin-bottom: 4px;
-  font-weight: 400;
   font-size: 16px;
-  line-height: 100%;
-  letter-spacing: 4%;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
 }
 
 .forecast-icon {
-  margin-bottom: 4px;
+  display: inline-block;
   width: 35px;
   height: 35px;
+  margin-bottom: 4px;
 }
 
 .forecast-temp {
@@ -79,7 +101,7 @@
 
 .forecast-temp li:first-child {
   padding-right: 5px;
-  border-right: 1px solid #ffffff20;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .forecast-temp li:last-child {
@@ -88,46 +110,60 @@
 
 .forecast-temp-title {
   margin-bottom: 5px;
-  font-weight: 400;
   font-size: 12px;
-  line-height: 100%;
-  color: #767d85;
+  line-height: 1.2;
+  color: #c3cbd5;
 }
 
 .forecast-temp-value {
-  font-weight: 400;
   font-size: 12px;
-  line-height: 100%;
+  line-height: 1.2;
   color: #ff6b09;
 }
 
 .forecast-button {
+  padding: 2px 0;
+  border: none;
+  border-bottom: 1px solid currentColor;
   background-color: transparent;
-  border: transparent;
+  color: #e1e5eb;
   font-weight: 700;
   font-size: 12px;
-  line-height: 100%;
-  color: #ffffff54;
-  border-bottom: 1px solid #ffffff54;
+  line-height: 1.2;
+  cursor: pointer;
 }
+
+.forecast-button:hover,
+.forecast-button:focus-visible,
+.forecast-button.active {
+  color: #ff8a3d;
+}
+
+/* =========================================
+   FORECAST NAVIGATION
+========================================= */
 
 .button-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 0 auto;
-  margin-bottom: 20px;
   width: 80px;
+  margin: 0 auto 20px;
 }
 
 .forecast-button-scroll {
-  cursor: pointer;
   width: 20px;
   height: 20px;
-  background: transparent;
-  border: transparent;
+  padding: 0;
+  border: none;
+  background-color: transparent;
   background-position: center;
   background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.forecast-button-scroll:disabled {
+  cursor: default;
 }
 
 .forecast-button-left {
@@ -138,53 +174,68 @@
   background-image: url('../img/arrow-right.svg');
 }
 
+/* =========================================
+   HOURLY FORECAST
+========================================= */
+
 .forecast-container-inner,
 .scroll-bar-wrapper,
 .forecast-chart-container {
   display: none;
 }
 
+.forecast-hours-wrapper {
+  overflow-x: auto;
+  padding-bottom: 20px;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.forecast-hours-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
 .forecast-hours {
+  display: flex;
   align-items: center;
   justify-content: flex-start;
   gap: 30px;
   min-width: max-content;
-  transition: transform 0.3s ease;
 }
 
 .forecast-hours-item {
-  flex-basis: calc((100% - 30px) / 2);
+  flex: 0 0 auto;
   padding: 20px 21px;
-  border: 2px solid #ffffff20;
+  border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 25px;
 }
 
 .forecast-hours-time {
   margin-bottom: 8px;
-  font-weight: 400;
   font-size: 14px;
-  line-height: 100%;
-  color: #ffffff54;
+  line-height: 1.2;
+  color: #d0d5dc;
 }
 
 .forecast-hours-icon {
-  margin-bottom: 8px;
   width: 35px;
   height: 35px;
+  margin-bottom: 8px;
 }
 
 .forecast-hours-temp {
   margin-bottom: 8px;
   font-weight: 700;
   font-size: 18px;
-  line-height: 100%;
+  line-height: 1.2;
   color: #ff6b09;
 }
 
 .forecast-hours-container {
   display: flex;
-  align-items: center;
   flex-direction: column;
+  align-items: center;
   row-gap: 10px;
 }
 
@@ -197,97 +248,96 @@
 .forecast-hours-img {
   width: 20px;
   height: 20px;
-  fill: #ffffff54;
+  fill: #d0d5dc;
 }
 
 .forecast-hours-value {
   min-width: 88px;
-  font-weight: 400;
   font-size: 14px;
-  line-height: 100%;
-  color: #ffffff54;
+  line-height: 1.2;
+  color: #d0d5dc;
 }
 
-.forecast-hours-wrapper {
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 20px;
-
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.forecast-hours-wrapper::-webkit-scrollbar {
-  display: none;
-}
+/* =========================================
+   CUSTOM SCROLLBAR
+========================================= */
 
 .scroll-bar-wrapper {
   position: absolute;
+  right: 0;
   bottom: 20px;
   left: 0;
-  right: 0;
-  height: 4px;
-  pointer-events: none;
   z-index: 10;
+  height: 4px;
   padding: 0 25px;
+  pointer-events: none;
 }
 
 .scroll-bar {
   position: relative;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.2);
   border-radius: 2px;
+  background-color: rgba(255, 255, 255, 0.2);
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.2s ease;
 }
 
 .scroll-thumb {
   position: absolute;
   top: 0;
   left: 0;
-  height: 100%;
-  background-color: #ff6b09;
-  border-radius: 2px;
-  transition: width 0.2s ease, left 0.2s ease;
   min-width: 30px;
+  height: 100%;
+  border-radius: 2px;
+  background-color: #ff6b09;
 }
+
+/* =========================================
+   CHART BUTTONS
+========================================= */
 
 .chart-button-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
-  margin-top: 20px;
+  margin: 20px auto 0;
 }
 
-.button-show-chart {
-  cursor: pointer;
+.button-show-chart,
+.button-hide-chart {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 75px;
+  min-height: 28px;
   margin-right: 10px;
-  width: 75px;
-  height: 18px;
+  padding: 0;
+  border: none;
+  border-bottom: 1px solid currentColor;
   background-color: transparent;
-  border: transparent;
-  font-weight: 400px;
-  font-size: 14px;
-  line-height: 100%;
   color: #ff6b09;
-  border-bottom: 1px solid #ff6b09;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.button-show-chart:hover,
+.button-hide-chart:hover,
+.button-show-chart:focus-visible,
+.button-hide-chart:focus-visible {
+  color: #ff8a3d;
 }
 
 .icon-container {
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background-color: #ffffff20;
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .button-chart-icon {
@@ -296,50 +346,62 @@
   transform: rotate(90deg);
 }
 
-.button-hide-chart {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 10px;
-  width: 75px;
-  height: 18px;
-  background-color: transparent;
-  border: transparent;
-  font-weight: 400px;
-  font-size: 14px;
-  line-height: 100%;
-  color: #ff6b09;
-  border-bottom: 1px solid #ff6b09;
-}
-
 .button-chart-icon-up {
   transform: rotate(-90deg);
 }
 
+/* =========================================
+   WEATHER CHARTS
+========================================= */
+
 .forecast-chart-container {
   flex-direction: column;
-  margin-top: 37px;
-  padding: 32px 11px;
-  background-color: #10213680;
-  border-radius: 34px;
+  width: 100%;
+  min-width: 0;
+  margin-top: 24px;
+  padding: 24px 12px;
+  border-radius: 24px;
+  background-color: rgba(16, 33, 54, 0.65);
 }
 
 .charts-container {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  margin-top: 10px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  width: 100%;
+  min-width: 0;
+  margin-top: 16px;
+}
+
+/*
+  Each chart receives its own sizing wrapper.
+  The canvas itself is controlled by Chart.js.
+*/
+
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  height: 220px;
+}
+
+.chart-wrapper > .forecast-chart {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .forecast-chart {
-  width: 100% !important;
+  display: block;
+  max-width: 100%;
 }
 
-/* FOR TABLET */
+/* =========================================
+   TABLET — 768px+
+========================================= */
 
 @media (min-width: 768px) {
-  .header {
+  .five-days-body .header {
     margin-bottom: 32px;
   }
 
@@ -350,16 +412,16 @@
   .forecast-city {
     margin-bottom: 24px;
     font-size: 28px;
-    letter-spacing: 4%;
   }
 
   .forecast-5days-wrapper {
-    overflow: visible;
     margin-bottom: 40px;
     padding: 0 52px;
+    overflow: visible;
   }
 
   .forecast-5days {
+    justify-content: center;
     gap: 24px;
   }
 
@@ -409,17 +471,31 @@
   .button-container {
     display: none;
   }
+
+  .forecast-chart-container {
+    padding: 28px 24px;
+    border-radius: 34px;
+  }
+
+  .charts-container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .chart-wrapper {
+    height: 230px;
+  }
 }
 
-/* FOR DESKTOP */
+/* =========================================
+   DESKTOP — 1280px+
+========================================= */
 
 @media (min-width: 1280px) {
   .five-days-body {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
       url('../img/desktop_five_days.jpg');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
   }
 
   .container-desktop-five-days {
@@ -436,8 +512,6 @@
 
   .forecast-city {
     margin-bottom: 40px;
-    font-size: 28px;
-    letter-spacing: 4%;
   }
 
   .forecast-5days {
@@ -470,7 +544,6 @@
   }
 
   .forecast-temp-title {
-    margin-bottom: 8px;
     font-size: 18px;
   }
 
@@ -498,39 +571,54 @@
     display: none !important;
   }
 
-  .forecast-hours-time {
+  .forecast-hours-time,
+  .forecast-hours-temp {
     margin-bottom: 18px;
   }
 
   .forecast-hours-temp {
-    margin-bottom: 18px;
     font-size: 25px;
   }
 
   .forecast-chart-container {
-    padding: 20px 107px;
+    padding: 32px 48px;
+  }
+
+  .chart-wrapper {
+    height: 250px;
   }
 }
 
-@media (min-resolution: 192dpi), (min-resolution: 2dppx) {
-  body {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+/* =========================================
+   RETINA BACKGROUNDS
+========================================= */
+
+@media (min-resolution: 2dppx) {
+  .five-days-body {
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
       url('../img/tablet_five_days@2x.jpg');
   }
 }
 
-@media (min-width: 768px) and (min-resolution: 192dpi),
-  (min-width: 768px) and (min-resolution: 2dppx) {
-  body {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
-      url('../img/tablet_five_days@2x.jpg');
-  }
-}
-
-@media (min-width: 1280px) and (min-resolution: 192dpi),
-  (min-width: 1280px) and (min-resolution: 2dppx) {
-  body {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+@media (min-width: 1280px) and (min-resolution: 2dppx) {
+  .five-days-body {
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
       url('../img/desktop_five_days@2x.jpg');
+  }
+}
+
+/* =========================================
+   REDUCED MOTION
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .forecast-hours-wrapper {
+    scroll-behavior: auto;
+  }
+
+  .scroll-bar {
+    transition: none;
   }
 }

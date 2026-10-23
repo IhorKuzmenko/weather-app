@@ -1,52 +1,38 @@
 import axios from 'axios';
 
-const apiKey = '324d82384f0b6b757e9697b6aa6e9ef8';
+const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
+const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
-/** Gets the current weather data for the specified city */
+const weatherApi = axios.create({
+  baseURL: BASE_URL,
+  timeout: 10000,
+});
 
-export async function getWeatherData(city) {
-  const searchParam = new URLSearchParams({
-    q: city,
-    appid: apiKey,
-    units: 'metric',
+async function fetchWeather(endpoint, params, signal) {
+  if (!API_KEY) {
+    throw new Error('OpenWeather API key is missing');
+  }
+
+  const response = await weatherApi.get(endpoint, {
+    params: {
+      ...params,
+      appid: API_KEY,
+      units: 'metric',
+    },
+    signal,
   });
-
-  const response = await axios.get(
-    `https://api.openweathermap.org/data/2.5/weather?${searchParam}`
-  );
 
   return response.data;
 }
 
-/** Gets the current weather data by geographic coordinates */
-
-export async function getWeatherByCoords(lat, lon) {
-  const searchParam = new URLSearchParams({
-    lat,
-    lon,
-    appid: apiKey,
-    units: 'metric',
-  });
-
-  const response = await axios.get(
-    `https://api.openweathermap.org/data/2.5/weather?${searchParam}`
-  );
-
-  return response.data;
+export function getWeatherData(city, signal) {
+  return fetchWeather('/weather', { q: city }, signal);
 }
 
-/** Gets the 5-day weather forecast for the specified city */
+export function getWeatherByCoords(lat, lon, signal) {
+  return fetchWeather('/weather', { lat, lon }, signal);
+}
 
-export async function getForecastFiveDays(city) {
-  const searchParam = new URLSearchParams({
-    q: city,
-    appid: apiKey,
-    units: 'metric',
-  });
-
-  const response = await axios.get(
-    `https://api.openweathermap.org/data/2.5/forecast?${searchParam}`
-  );
-
-  return response.data;
+export function getForecastFiveDays(city, signal) {
+  return fetchWeather('/forecast', { q: city }, signal);
 }
