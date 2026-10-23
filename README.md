@@ -3,7 +3,7 @@ forecast for a selected city or based on the user's geolocation. The app is
 built with a modern frontend stack and demonstrates working with APIs and
 dynamic data rendering.
 
-## 🛠 Technologies:
+🛠 Technologies:
 
 HTML, CSS, JavaScript — for structure, styling, and app logic
 
@@ -15,7 +15,7 @@ IziToast — library for beautiful notifications
 
 OpenWeather API — for fetching up-to-date weather data
 
-## ⚡ Key Features:
+⚡ Key Features:
 
 Get the current weather for a chosen city or via geolocation
 

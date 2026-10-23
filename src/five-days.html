@@ -1,97 +1,175 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta
+      name="description"
+      content="Explore a detailed 5-day weather forecast with hourly updates and interactive charts for temperature, humidity, wind speed, and pressure."
+    />
+
+    <meta name="theme-color" content="#ffffff" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
     <link
-      href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap"
       rel="stylesheet"
     />
+
     <link rel="stylesheet" href="./css/styles.css" />
-    <title>Weather</title>
+
+    <title>5-Day Forecast | Weather App</title>
   </head>
+
   <body class="five-days-body">
     <header class="header">
       <div class="container">
         <div class="header-wrapper">
-          <svg class="header-icon-location">
+          <svg
+            class="header-icon-location"
+            aria-hidden="true"
+            focusable="false"
+          >
             <use href="./img/icons.svg#icon-location"></use>
           </svg>
+
           <input
             class="header-input"
             type="text"
             placeholder="Enter the city"
+            aria-label="Enter city name"
+            autocomplete="off"
           />
-          <svg class="header-icon-star">
+
+          <svg class="header-icon-star" aria-hidden="true" focusable="false">
             <use href="./img/icons.svg#icon-star"></use>
           </svg>
         </div>
       </div>
     </header>
+
     <main>
-      <section class="five-days">
+      <section class="five-days" aria-label="Five-day weather forecast">
         <div class="container container-desktop-five-days">
-          <div class="buttons-wrapper buttons-wrapper-five-days">
-            <a class="button inactive" href="./index.html">Today</a>
-            <a class="button" href="#">5 days</a>
-          </div>
+          <nav
+            class="buttons-wrapper buttons-wrapper-five-days"
+            aria-label="Weather forecast"
+          >
+            <a class="button inactive" href="./index.html"> Today </a>
+
+            <a class="button" href="./five-days.html" aria-current="page">
+              5 days
+            </a>
+          </nav>
+
           <div class="forecast-container">
             <div class="forecast-city"></div>
+
             <div class="forecast-5days-wrapper">
               <ul class="forecast-5days"></ul>
             </div>
+
             <div class="button-container">
               <button
                 class="forecast-button-scroll forecast-button-left"
                 type="button"
+                aria-label="Scroll forecast left"
               ></button>
+
               <button
                 class="forecast-button-scroll forecast-button-right"
                 type="button"
+                aria-label="Scroll forecast right"
               ></button>
             </div>
+
             <div class="forecast-container-inner">
               <div class="forecast-hours-wrapper">
                 <ul class="forecast-hours"></ul>
               </div>
             </div>
 
-            <div class="scroll-bar-wrapper">
+            <div class="scroll-bar-wrapper" aria-hidden="true">
               <div class="scroll-bar">
                 <div class="scroll-thumb"></div>
               </div>
             </div>
           </div>
+
           <div class="chart-button-container chart-button-show-container">
-            <button class="button-show-chart" type="button">Show Chart</button>
-            <div class="icon-container">
-              <img class="button-chart-icon" src="./img/arrow-right.svg" />
+            <button
+              class="button-show-chart"
+              type="button"
+              aria-controls="forecast-charts"
+            >
+              Show Chart
+            </button>
+
+            <div class="icon-container" aria-hidden="true">
+              <img
+                class="button-chart-icon"
+                src="./img/arrow-right.svg"
+                alt=""
+              />
             </div>
           </div>
-          <div class="forecast-chart-container">
+
+          <div class="forecast-chart-container" id="forecast-charts">
             <div class="chart-button-container chart-button-hide-container">
-              <button class="button-hide-chart" type="button">
+              <button
+                class="button-hide-chart"
+                type="button"
+                aria-controls="forecast-charts"
+              >
                 Hide Chart
               </button>
-              <div class="icon-container">
+
+              <div class="icon-container" aria-hidden="true">
                 <img
                   class="button-chart-icon button-chart-icon-up"
                   src="./img/arrow-right.svg"
+                  alt=""
                 />
               </div>
             </div>
+
             <div class="charts-container">
-              <canvas id="chart-temp" class="forecast-chart"></canvas>
-              <canvas id="chart-humidity" class="forecast-chart"></canvas>
-              <canvas id="chart-wind" class="forecast-chart"></canvas>
-              <canvas id="chart-pressure" class="forecast-chart"></canvas>
+              <canvas
+                id="chart-temp"
+                class="forecast-chart"
+                role="img"
+                aria-label="Temperature forecast chart"
+              ></canvas>
+
+              <canvas
+                id="chart-humidity"
+                class="forecast-chart"
+                role="img"
+                aria-label="Humidity forecast chart"
+              ></canvas>
+
+              <canvas
+                id="chart-wind"
+                class="forecast-chart"
+                role="img"
+                aria-label="Wind speed forecast chart"
+              ></canvas>
+
+              <canvas
+                id="chart-pressure"
+                class="forecast-chart"
+                role="img"
+                aria-label="Atmospheric pressure forecast chart"
+              ></canvas>
             </div>
           </div>
         </div>
       </section>
     </main>
+
     <script src="./main.js" type="module"></script>
   </body>
 </html>
