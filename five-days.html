@@ -15,14 +15,29 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <link
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap"
-      rel="stylesheet"
     />
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap"
+      media="print"
+      onload="this.media = 'all'"
+    />
+
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap"
+      />
+    </noscript>
 
 
     <title>5-Day Forecast | Weather App</title>
     <script type="module" crossorigin src="/weather-app/assets/vendor-1EtPX3YI.js"></script>
-    <script type="module" crossorigin src="/weather-app/assets/main-CdAtsUhl.js"></script>
+    <script type="module" crossorigin src="/weather-app/assets/main-Bcp9G1I6.js"></script>
     <link rel="stylesheet" crossorigin href="/weather-app/assets/main-nZ7bnzKr.css">
     <link rel="stylesheet" crossorigin href="/weather-app/assets/vendor-DnveWo0P.css">
   </head>
@@ -61,7 +76,7 @@
             class="buttons-wrapper buttons-wrapper-five-days"
             aria-label="Weather forecast"
           >
-            <a class="button inactive" href="./index.html"> Today </a>
+            <a class="button inactive" href="./index.html">Today</a>
 
             <a class="button" href="./five-days.html" aria-current="page">
               5 days
