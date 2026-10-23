@@ -6,6 +6,7 @@ import {
   getWeatherByCoords,
   getForecastFiveDays,
 } from './js/weather-api';
+
 import {
   createWeatherCard,
   clearWeatherCard,
@@ -18,42 +19,92 @@ import {
   renderForecastChart,
 } from './js/render-function';
 
-import { initScroll } from './js/scroll-function';
+import { initScroll, resetHourlyScroll } from './js/scroll-function';
+
+/* =========================================
+   DOM ELEMENTS
+========================================= */
 
 const input = document.querySelector('.header-input');
 
-/**isTodayPage and isFiveDaysPage are flags to know which page we are on (current weather or 5-day forecast). */
+const isTodayPage = Boolean(document.querySelector('.home'));
+const isFiveDaysPage = Boolean(document.querySelector('.five-days'));
 
-const isTodayPage = document.querySelector('.home') !== null;
-const isFiveDaysPage = document.querySelector('.five-days') !== null;
+const buttonShowChart = document.querySelector('.button-show-chart');
 
-/**getDateInfo() - Returns an object with the current date and time,
- * formatting the day, month, day of the week, and time. */
+const buttonHideChart = document.querySelector('.button-hide-chart');
 
-function getDateInfo() {
-  const now = new Date();
+const buttonShowChartContainer = document.querySelector(
+  '.chart-button-show-container'
+);
 
-  const day = now.getDate();
-  const weekday = now.toLocaleDateString('en-US', { weekday: 'short' });
-  const month = now.toLocaleDateString('en-US', { month: 'long' });
-  const time = now.toLocaleTimeString('en-GB', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
+const forecastChartContainer = document.querySelector(
+  '.forecast-chart-container'
+);
+
+/* =========================================
+   APPLICATION STATE
+========================================= */
+
+const DEFAULT_CITY = 'Kyiv';
+const STORAGE_KEY = 'currentCity';
+
+let lastForecastData = null;
+let activeForecastButton = null;
+
+let currentController = null;
+let requestVersion = 0;
+
+let chartsRenderedForData = null;
+let chartsRenderingForData = null;
+
+/* =========================================
+   NOTIFICATIONS
+========================================= */
+
+function showMessage(message) {
+  iziToast.show({
+    message,
+    position: 'topRight',
+    timeout: 5000,
   });
-
-  return {
-    day: `${day}<sup>${getOrdinalSuffix(day)}</sup>`,
-    weekday,
-    month,
-    time,
-  };
 }
 
-/**Adds an English suffix to the day (st, nd, rd, th) to display the date beautifully. */
+function isRequestCanceled(error) {
+  return (
+    error?.code === 'ERR_CANCELED' ||
+    error?.name === 'AbortError' ||
+    error?.name === 'CanceledError'
+  );
+}
+
+function getErrorMessage(error) {
+  if (error?.response?.status === 404) {
+    return 'City not found. Please check the name.';
+  }
+
+  if (error?.response?.status === 401) {
+    return 'Weather API authorization error.';
+  }
+
+  if (error?.response?.status === 429) {
+    return 'Too many requests. Please try again later.';
+  }
+
+  if (error?.code === 'ECONNABORTED' || error?.code === 'ETIMEDOUT') {
+    return 'Request timed out. Please try again.';
+  }
+
+  return 'Unable to load weather. Check your connection.';
+}
+
+/* =========================================
+   DATE AND TIME
+========================================= */
 
 function getOrdinalSuffix(day) {
   if (day > 3 && day < 21) return 'th';
+
   switch (day % 10) {
     case 1:
       return 'st';
@@ -66,210 +117,371 @@ function getOrdinalSuffix(day) {
   }
 }
 
-/**Converts sunrise/sunset times from UNIX + timezone to convenient HH:MM format */
+function getDateInfo(timezone = 0) {
+  const now = new Date(Date.now() + timezone * 1000);
 
-function formatSunTime(unix, timezone) {
-  return new Date((unix + timezone) * 1000).toUTCString().slice(17, 22);
+  const day = now.getUTCDate();
+
+  const weekday = now.toLocaleDateString('en-US', {
+    weekday: 'short',
+    timeZone: 'UTC',
+  });
+
+  const month = now.toLocaleDateString('en-US', {
+    month: 'long',
+    timeZone: 'UTC',
+  });
+
+  const time = now.toLocaleTimeString('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+    timeZone: 'UTC',
+  });
+
+  return {
+    day: `${day}${getOrdinalSuffix(day)}`,
+    weekday,
+    month,
+    time,
+  };
 }
 
-let lastForecastData = null;
+function formatSunTime(unix, timezone) {
+  const date = new Date((unix + timezone) * 1000);
+
+  return date.toLocaleTimeString('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    timeZone: 'UTC',
+  });
+}
+
+/* =========================================
+   RESET FORECAST UI
+========================================= */
+
+function resetForecastDetails() {
+  if (!isFiveDaysPage) return;
+
+  if (activeForecastButton) {
+    activeForecastButton.classList.remove('active');
+    activeForecastButton = null;
+  }
+
+  clearForecastHours();
+  resetHourlyScroll();
+
+  const inner = document.querySelector('.forecast-container-inner');
+
+  const scrollbar = document.querySelector('.scroll-bar-wrapper');
+
+  if (inner) {
+    inner.style.display = 'none';
+  }
+
+  if (scrollbar) {
+    scrollbar.style.display = 'none';
+  }
+}
+
+function resetChartVisibility() {
+  if (!isFiveDaysPage) return;
+
+  if (forecastChartContainer) {
+    forecastChartContainer.style.display = 'none';
+  }
+
+  if (buttonShowChartContainer) {
+    buttonShowChartContainer.style.display = 'flex';
+  }
+}
+
+/* =========================================
+   UPDATE WEATHER
+========================================= */
 
 async function updateWeather(cityOrCoords, saveToSession = false) {
-  let currentData, forecastData;
+  if (!isTodayPage && !isFiveDaysPage) return false;
+
+  currentController?.abort();
+
+  const controller = new AbortController();
+  currentController = controller;
+
+  const currentRequest = ++requestVersion;
 
   try {
+    let currentData;
+    let forecastData = null;
+
     if (typeof cityOrCoords === 'string') {
-      currentData = await getWeatherData(cityOrCoords);
+      currentData = await getWeatherData(cityOrCoords, controller.signal);
     } else {
       currentData = await getWeatherByCoords(
         cityOrCoords.lat,
-        cityOrCoords.lon
+        cityOrCoords.lon,
+        controller.signal
       );
     }
-    forecastData = await getForecastFiveDays(currentData.name);
-    lastForecastData = forecastData;
+
+    /*
+      The forecast endpoint is only needed
+      on the five-day forecast page.
+    */
+
+    if (isFiveDaysPage) {
+      forecastData = await getForecastFiveDays(
+        currentData.name,
+        controller.signal
+      );
+    }
+
+    if (controller.signal.aborted || currentRequest !== requestVersion) {
+      return false;
+    }
+
+    /* TODAY PAGE */
+
+    if (isTodayPage) {
+      clearWeatherCard();
+      clearDateInfoCard();
+
+      const dateInfo = getDateInfo(currentData.timezone);
+
+      createWeatherCard({
+        city: currentData.name,
+        country: currentData.sys.country,
+
+        temp: Math.round(currentData.main.temp),
+        tempMin: Math.round(currentData.main.temp_min),
+        tempMax: Math.round(currentData.main.temp_max),
+
+        icon: currentData.weather[0].icon,
+
+        day: dateInfo.day,
+        weekday: dateInfo.weekday,
+        month: dateInfo.month,
+        time: dateInfo.time,
+
+        sunrise: formatSunTime(currentData.sys.sunrise, currentData.timezone),
+
+        sunset: formatSunTime(currentData.sys.sunset, currentData.timezone),
+      });
+    }
+
+    /* FIVE DAYS PAGE */
+
+    if (isFiveDaysPage && forecastData) {
+      resetForecastDetails();
+      resetChartVisibility();
+
+      lastForecastData = forecastData;
+
+      chartsRenderedForData = null;
+      chartsRenderingForData = null;
+
+      clearForecastFiveDaysCards();
+
+      setForecastCity(forecastData.city.name, forecastData.city.country);
+
+      createForecastFiveDaysCards(forecastData);
+
+      initScroll();
+    }
 
     if (saveToSession) {
-      sessionStorage.setItem('currentCity', currentData.name);
+      try {
+        sessionStorage.setItem(STORAGE_KEY, currentData.name);
+      } catch {
+        // Weather display still works without storage.
+      }
     }
-  } catch (err) {
-    iziToast.show({
-      message: 'City not found or network error',
-      position: 'topRight',
-      timeout: 5000,
-    });
-    return;
-  }
 
-  if (isTodayPage) {
-    clearWeatherCard();
-    clearDateInfoCard();
-  }
-  if (isFiveDaysPage) {
-    clearForecastFiveDaysCards();
-  }
+    return true;
+  } catch (error) {
+    if (
+      isRequestCanceled(error) ||
+      controller.signal.aborted ||
+      currentRequest !== requestVersion
+    ) {
+      return false;
+    }
 
-  if (isTodayPage) {
-    const dateInfo = getDateInfo();
+    console.error('Weather request failed:', error);
 
-    createWeatherCard({
-      city: currentData.name,
-      country: currentData.sys.country,
-      temp: Math.round(currentData.main.temp),
-      tempMin: Math.round(currentData.main.temp_min),
-      tempMax: Math.round(currentData.main.temp_max),
-      icon: currentData.weather[0].icon,
+    showMessage(getErrorMessage(error));
 
-      day: dateInfo.day,
-      weekday: dateInfo.weekday,
-      month: dateInfo.month,
-      time: dateInfo.time,
-      sunrise: formatSunTime(currentData.sys.sunrise, currentData.timezone),
-      sunset: formatSunTime(currentData.sys.sunset, currentData.timezone),
-    });
-  }
-
-  if (isFiveDaysPage) {
-    setForecastCity(forecastData.city.name, forecastData.city.country);
-    createForecastFiveDaysCards(forecastData);
-    initScroll();
+    return false;
+  } finally {
+    if (currentController === controller) {
+      currentController = null;
+    }
   }
 }
 
-/**Page loading - autostart */
+/* =========================================
+   INITIAL LOAD
+========================================= */
 
-window.addEventListener('load', () => {
-  const cityFromSession = sessionStorage.getItem('currentCity');
+function initializeWeather() {
+  let savedCity = null;
 
-  if (cityFromSession) {
-    updateWeather(cityFromSession);
+  try {
+    savedCity = sessionStorage.getItem(STORAGE_KEY);
+  } catch {
+    savedCity = null;
+  }
+
+  updateWeather(savedCity || DEFAULT_CITY);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeWeather, {
+    once: true,
+  });
+} else {
+  initializeWeather();
+}
+
+/* =========================================
+   CITY SEARCH
+========================================= */
+
+input?.addEventListener('keydown', async event => {
+  if (event.key !== 'Enter') return;
+
+  event.preventDefault();
+
+  const city = input.value.trim();
+
+  if (!city) {
+    showMessage('Please enter a city name.');
     return;
   }
 
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        const { latitude, longitude } = position.coords;
-        updateWeather({ lat: latitude, lon: longitude });
-      },
-      () => {
-        iziToast.show({
-          message: 'Geolocation denied, enter city manually',
-          position: 'topRight',
-          timeout: 5000,
-        });
+  const success = await updateWeather(city, true);
 
-        updateWeather({ lat: 50.4333, lon: 30.5167 });
-      }
-    );
-  } else {
-    iziToast.show({
-      message: 'Geolocation not supported',
-      position: 'topRight',
-      timeout: 5000,
-    });
-
-    updateWeather({ lat: 50.4333, lon: 30.5167 });
-  }
-});
-
-/**City input field */
-
-input.addEventListener('keydown', async e => {
-  if (e.key === 'Enter') {
-    const city = input.value.trim();
-
-    if (!city) {
-      iziToast.show({
-        message: 'Enter the city',
-        position: 'topRight',
-        timeout: 5000,
-      });
-
-      return;
-    }
-    await updateWeather(city, true);
-
+  if (success) {
     input.value = '';
   }
 });
 
-/**Storage event */
+/* =========================================
+   STORAGE EVENT
+========================================= */
 
-window.addEventListener('storage', e => {
-  if (e.key === 'currentCity') {
-    input.value = e.newValue;
-    updateWeather(e.newValue);
-  }
+window.addEventListener('storage', event => {
+  if (event.key !== STORAGE_KEY) return;
+
+  const city = event.newValue || DEFAULT_CITY;
+
+  updateWeather(city);
 });
 
-let activeForecastButton = null; //Stores the currently active "more info" button in the 5-day forecast.
+/* =========================================
+   FIVE-DAY DETAILS
+========================================= */
 
-//Processing clicks on the "more info" buttons in the 5-day forecast
+if (isFiveDaysPage) {
+  document.addEventListener('click', event => {
+    const button = event.target.closest('.forecast-button');
 
-document.addEventListener('click', e => {
-  const forecastHours = document.querySelector('.forecast-hours');
-  const button = e.target.closest('.forecast-button'); //We check whether the click was on the "more info" button or inside it.
+    if (!button || !lastForecastData) return;
 
-  if (!button || !forecastHours || !lastForecastData) return;
+    const date = button.dataset.date;
 
-  const date = button.dataset.date; //The date to which the button is linked.
+    if (!date) return;
 
-  if (!date) return;
+    if (activeForecastButton === button) {
+      button.classList.remove('active');
+      activeForecastButton = null;
 
-  /**Closing the active button */
+      resetForecastDetails();
+      return;
+    }
 
-  if (activeForecastButton === button) {
+    if (activeForecastButton) {
+      activeForecastButton.classList.remove('active');
+    }
+
+    const hoursData = lastForecastData.list.filter(item =>
+      item.dt_txt.startsWith(date)
+    );
+
     clearForecastHours();
-    button.classList.remove('active');
-    activeForecastButton = null;
+    renderForecastHours(hoursData);
+    resetHourlyScroll();
+
+    button.classList.add('active');
+    activeForecastButton = button;
+  });
+}
+
+/* =========================================
+   CHART VISIBILITY
+========================================= */
+
+async function showCharts() {
+  if (
+    !lastForecastData ||
+    !forecastChartContainer ||
+    !buttonShowChartContainer
+  ) {
     return;
   }
 
-  /**Switch to another button */
+  buttonShowChartContainer.style.display = 'none';
+  forecastChartContainer.style.display = 'flex';
 
-  if (activeForecastButton) {
-    activeForecastButton.classList.remove('active');
+  /*
+    Wait for the browser to calculate
+    the visible chart container dimensions.
+  */
+
+  await new Promise(resolve => {
+    requestAnimationFrame(resolve);
+  });
+
+  const forecastData = lastForecastData;
+
+  if (chartsRenderedForData === forecastData) {
+    return;
   }
 
-  /**Filtering data by a selected date */
-  const hoursData = lastForecastData.list.filter(item => {
-    const itemDate = item.dt_txt.split(' ')[0];
-    return itemDate === date;
-  });
+  if (chartsRenderingForData === forecastData) {
+    return;
+  }
 
-  clearForecastHours();
-  renderForecastHours(hoursData);
+  chartsRenderingForData = forecastData;
 
-  button.classList.add('active');
-  activeForecastButton = button;
-});
+  try {
+    await renderForecastChart(forecastData);
 
-const buttonShowChart = document.querySelector('.button-show-chart');
-const buttonShowChartContainer = document.querySelector(
-  '.chart-button-show-container'
-);
-const buttonHideChart = document.querySelector('.button-hide-chart');
-const forecastChartContainer = document.querySelector(
-  '.forecast-chart-container'
-);
+    if (lastForecastData === forecastData) {
+      chartsRenderedForData = forecastData;
+    }
+  } catch (error) {
+    console.error('Chart rendering failed:', error);
 
-if (buttonShowChart && forecastChartContainer && buttonShowChartContainer) {
-  buttonShowChart.addEventListener('click', () => {
-    if (!buttonShowChart || !forecastChartContainer) return;
-    buttonShowChartContainer.style.display = 'none';
-    forecastChartContainer.style.display = 'flex';
+    showMessage('Unable to display weather charts.');
 
-    requestAnimationFrame(() => {
-      if (lastForecastData) {
-        renderForecastChart(lastForecastData);
-      }
-    });
-  });
+    resetChartVisibility();
+  } finally {
+    if (chartsRenderingForData === forecastData) {
+      chartsRenderingForData = null;
+    }
+  }
+}
 
-  buttonHideChart.addEventListener('click', () => {
-    if (!buttonHideChart || !forecastChartContainer) return;
-    buttonShowChartContainer.style.display = 'flex';
-    forecastChartContainer.style.display = 'none';
-  });
+function hideCharts() {
+  resetChartVisibility();
+}
+
+if (isFiveDaysPage) {
+  buttonShowChart?.addEventListener('click', showCharts);
+
+  buttonHideChart?.addEventListener('click', hideCharts);
 }
