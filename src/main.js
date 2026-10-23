@@ -9,8 +9,6 @@ import {
 
 import {
   createWeatherCard,
-  clearWeatherCard,
-  clearDateInfoCard,
   createForecastFiveDaysCards,
   clearForecastFiveDaysCards,
   setForecastCity,
@@ -21,46 +19,28 @@ import {
 
 import { initScroll, resetHourlyScroll } from './js/scroll-function';
 
-/* =========================================
-   DOM ELEMENTS
-========================================= */
-
 const input = document.querySelector('.header-input');
-
 const isTodayPage = Boolean(document.querySelector('.home'));
 const isFiveDaysPage = Boolean(document.querySelector('.five-days'));
 
 const buttonShowChart = document.querySelector('.button-show-chart');
-
 const buttonHideChart = document.querySelector('.button-hide-chart');
-
 const buttonShowChartContainer = document.querySelector(
   '.chart-button-show-container'
 );
-
 const forecastChartContainer = document.querySelector(
   '.forecast-chart-container'
 );
-
-/* =========================================
-   APPLICATION STATE
-========================================= */
 
 const DEFAULT_CITY = 'Kyiv';
 const STORAGE_KEY = 'currentCity';
 
 let lastForecastData = null;
 let activeForecastButton = null;
-
 let currentController = null;
 let requestVersion = 0;
-
 let chartsRenderedForData = null;
 let chartsRenderingForData = null;
-
-/* =========================================
-   NOTIFICATIONS
-========================================= */
 
 function showMessage(message) {
   iziToast.show({
@@ -79,28 +59,17 @@ function isRequestCanceled(error) {
 }
 
 function getErrorMessage(error) {
-  if (error?.response?.status === 404) {
-    return 'City not found. Please check the name.';
+  switch (error?.response?.status) {
+    case 404:
+      return 'City not found. Please check the name.';
+    case 401:
+      return 'Weather API authorization error.';
+    case 429:
+      return 'Too many requests. Please try again later.';
+    default:
+      return 'Unable to load weather. Check your connection.';
   }
-
-  if (error?.response?.status === 401) {
-    return 'Weather API authorization error.';
-  }
-
-  if (error?.response?.status === 429) {
-    return 'Too many requests. Please try again later.';
-  }
-
-  if (error?.code === 'ECONNABORTED' || error?.code === 'ETIMEDOUT') {
-    return 'Request timed out. Please try again.';
-  }
-
-  return 'Unable to load weather. Check your connection.';
 }
-
-/* =========================================
-   DATE AND TIME
-========================================= */
 
 function getOrdinalSuffix(day) {
   if (day > 3 && day < 21) return 'th';
@@ -119,39 +88,30 @@ function getOrdinalSuffix(day) {
 
 function getDateInfo(timezone = 0) {
   const now = new Date(Date.now() + timezone * 1000);
-
   const day = now.getUTCDate();
 
-  const weekday = now.toLocaleDateString('en-US', {
-    weekday: 'short',
-    timeZone: 'UTC',
-  });
-
-  const month = now.toLocaleDateString('en-US', {
-    month: 'long',
-    timeZone: 'UTC',
-  });
-
-  const time = now.toLocaleTimeString('en-GB', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-    timeZone: 'UTC',
-  });
-
   return {
-    day: `${day}${getOrdinalSuffix(day)}`,
-    weekday,
-    month,
-    time,
+    day: `${day}<sup>${getOrdinalSuffix(day)}</sup>`,
+    weekday: now.toLocaleDateString('en-US', {
+      weekday: 'short',
+      timeZone: 'UTC',
+    }),
+    month: now.toLocaleDateString('en-US', {
+      month: 'long',
+      timeZone: 'UTC',
+    }),
+    time: now.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+      timeZone: 'UTC',
+    }),
   };
 }
 
 function formatSunTime(unix, timezone) {
-  const date = new Date((unix + timezone) * 1000);
-
-  return date.toLocaleTimeString('en-GB', {
+  return new Date((unix + timezone) * 1000).toLocaleTimeString('en-GB', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
@@ -159,23 +119,16 @@ function formatSunTime(unix, timezone) {
   });
 }
 
-/* =========================================
-   RESET FORECAST UI
-========================================= */
-
 function resetForecastDetails() {
   if (!isFiveDaysPage) return;
 
-  if (activeForecastButton) {
-    activeForecastButton.classList.remove('active');
-    activeForecastButton = null;
-  }
+  activeForecastButton?.classList.remove('active');
+  activeForecastButton = null;
 
   clearForecastHours();
   resetHourlyScroll();
 
   const inner = document.querySelector('.forecast-container-inner');
-
   const scrollbar = document.querySelector('.scroll-bar-wrapper');
 
   if (inner) inner.style.display = 'none';
@@ -194,9 +147,18 @@ function resetChartVisibility() {
   }
 }
 
-/* =========================================
-   UPDATE WEATHER
-========================================= */
+function setWeatherLoading(isLoading) {
+  if (!isTodayPage) return;
+
+  const weatherCard = document.querySelector('.weather-card');
+  const datetimeCard = document.querySelector('.datetime-card');
+
+  for (const card of [weatherCard, datetimeCard]) {
+    if (!card) continue;
+
+    card.setAttribute('aria-busy', String(isLoading));
+  }
+}
 
 async function updateWeather(cityOrCoords, saveToSession = false) {
   if (!isTodayPage && !isFiveDaysPage) return false;
@@ -208,19 +170,19 @@ async function updateWeather(cityOrCoords, saveToSession = false) {
 
   const currentRequest = ++requestVersion;
 
-  try {
-    let currentData;
-    let forecastData = null;
+  setWeatherLoading(true);
 
-    if (typeof cityOrCoords === 'string') {
-      currentData = await getWeatherData(cityOrCoords, controller.signal);
-    } else {
-      currentData = await getWeatherByCoords(
-        cityOrCoords.lat,
-        cityOrCoords.lon,
-        controller.signal
-      );
-    }
+  try {
+    const currentData =
+      typeof cityOrCoords === 'string'
+        ? await getWeatherData(cityOrCoords, controller.signal)
+        : await getWeatherByCoords(
+            cityOrCoords.lat,
+            cityOrCoords.lon,
+            controller.signal
+          );
+
+    let forecastData = null;
 
     if (isFiveDaysPage) {
       forecastData = await getForecastFiveDays(
@@ -233,43 +195,28 @@ async function updateWeather(cityOrCoords, saveToSession = false) {
       return false;
     }
 
-    /* TODAY PAGE */
-
     if (isTodayPage) {
-      clearWeatherCard();
-      clearDateInfoCard();
-
       const dateInfo = getDateInfo(currentData.timezone);
 
+      // Update existing content without hiding the cards.
       createWeatherCard({
         city: currentData.name,
         country: currentData.sys.country,
-
         temp: Math.round(currentData.main.temp),
         tempMin: Math.round(currentData.main.temp_min),
         tempMax: Math.round(currentData.main.temp_max),
-
         icon: currentData.weather[0].icon,
-
-        day: dateInfo.day,
-        weekday: dateInfo.weekday,
-        month: dateInfo.month,
-        time: dateInfo.time,
-
+        ...dateInfo,
         sunrise: formatSunTime(currentData.sys.sunrise, currentData.timezone),
-
         sunset: formatSunTime(currentData.sys.sunset, currentData.timezone),
       });
     }
-
-    /* FIVE DAYS PAGE */
 
     if (isFiveDaysPage && forecastData) {
       resetForecastDetails();
       resetChartVisibility();
 
       lastForecastData = forecastData;
-
       chartsRenderedForData = null;
       chartsRenderingForData = null;
 
@@ -278,7 +225,6 @@ async function updateWeather(cityOrCoords, saveToSession = false) {
       setForecastCity(forecastData.city.name, forecastData.city.country);
 
       createForecastFiveDaysCards(forecastData);
-
       initScroll();
     }
 
@@ -286,7 +232,7 @@ async function updateWeather(cityOrCoords, saveToSession = false) {
       try {
         sessionStorage.setItem(STORAGE_KEY, currentData.name);
       } catch {
-        // Weather display works without storage.
+        // Storage may be unavailable.
       }
     }
 
@@ -307,13 +253,10 @@ async function updateWeather(cityOrCoords, saveToSession = false) {
   } finally {
     if (currentController === controller) {
       currentController = null;
+      setWeatherLoading(false);
     }
   }
 }
-
-/* =========================================
-   INITIAL LOAD
-========================================= */
 
 function initializeWeather() {
   let savedCity = null;
@@ -321,7 +264,7 @@ function initializeWeather() {
   try {
     savedCity = sessionStorage.getItem(STORAGE_KEY);
   } catch {
-    savedCity = null;
+    // Use the default city.
   }
 
   updateWeather(savedCity || DEFAULT_CITY);
@@ -334,10 +277,6 @@ if (document.readyState === 'loading') {
 } else {
   initializeWeather();
 }
-
-/* =========================================
-   CITY SEARCH
-========================================= */
 
 input?.addEventListener('keydown', async event => {
   if (event.key !== 'Enter') return;
@@ -358,21 +297,11 @@ input?.addEventListener('keydown', async event => {
   }
 });
 
-/* =========================================
-   STORAGE EVENT
-========================================= */
-
 window.addEventListener('storage', event => {
   if (event.key !== STORAGE_KEY) return;
 
-  const city = event.newValue || DEFAULT_CITY;
-
-  updateWeather(city);
+  updateWeather(event.newValue || DEFAULT_CITY);
 });
-
-/* =========================================
-   FIVE-DAY DETAILS
-========================================= */
 
 if (isFiveDaysPage) {
   document.addEventListener('click', event => {
@@ -381,7 +310,6 @@ if (isFiveDaysPage) {
     if (!button || !lastForecastData) return;
 
     const date = button.dataset.date;
-
     if (!date) return;
 
     if (activeForecastButton === button) {
@@ -389,9 +317,7 @@ if (isFiveDaysPage) {
       return;
     }
 
-    if (activeForecastButton) {
-      activeForecastButton.classList.remove('active');
-    }
+    activeForecastButton?.classList.remove('active');
 
     const hoursData = lastForecastData.list.filter(item =>
       item.dt_txt.startsWith(date)
@@ -406,10 +332,6 @@ if (isFiveDaysPage) {
   });
 }
 
-/* =========================================
-   CHART VISIBILITY
-========================================= */
-
 async function showCharts() {
   if (
     !lastForecastData ||
@@ -422,17 +344,14 @@ async function showCharts() {
   buttonShowChartContainer.style.display = 'none';
   forecastChartContainer.style.display = 'flex';
 
-  await new Promise(resolve => {
-    requestAnimationFrame(resolve);
-  });
+  await new Promise(resolve => requestAnimationFrame(resolve));
 
   const forecastData = lastForecastData;
 
-  if (chartsRenderedForData === forecastData) {
-    return;
-  }
-
-  if (chartsRenderingForData === forecastData) {
+  if (
+    chartsRenderedForData === forecastData ||
+    chartsRenderingForData === forecastData
+  ) {
     return;
   }
 
@@ -446,7 +365,6 @@ async function showCharts() {
     }
   } catch (error) {
     console.error('Chart rendering failed:', error);
-
     showMessage('Unable to display weather charts.');
     resetChartVisibility();
   } finally {
@@ -459,10 +377,6 @@ async function showCharts() {
 function hideCharts() {
   resetChartVisibility();
 }
-
-/* =========================================
-   CHART TOGGLE EVENTS
-========================================= */
 
 function addChartIconHandler(icon, button, callback, label) {
   if (!icon || button?.contains(icon)) return;

@@ -21,15 +21,24 @@ body {
 ========================================= */
 
 .weather-card {
-  display: none;
+  display: block;
+  visibility: hidden;
+
   width: 100%;
+  min-height: 225px;
+
   margin-top: 40px;
   margin-bottom: 24px;
   padding: 32px 24px;
+
   border-radius: 34px;
   background-color: #102136;
   box-shadow: 0 5px 30px rgba(16, 33, 54, 0.6);
   text-align: center;
+}
+
+.weather-card.is-loaded {
+  visibility: visible;
 }
 
 .weather-icon {
@@ -94,6 +103,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+
   width: 100%;
   margin-bottom: 32px;
   padding: 0 5px;
@@ -104,18 +114,22 @@ body {
   align-items: center;
   justify-content: center;
   flex: 1;
+
   min-width: 0;
   min-height: 30px;
   padding: 6px 12px;
+
   border-radius: 20px;
   background-color: #ffffff;
   color: #000000;
+
   font-size: 14px;
   font-weight: 700;
   line-height: 1.2;
   text-align: center;
   text-decoration: none;
   text-transform: uppercase;
+
   transition:
     background-color 250ms ease,
     box-shadow 250ms ease,
@@ -141,13 +155,22 @@ body {
 ========================================= */
 
 .datetime-card {
-  display: none;
+  display: block;
+  visibility: hidden;
+
   width: 100%;
+  min-height: 195px;
+
   margin-bottom: 36px;
   padding: 32px 16px;
+
   border-radius: 34px;
   background-color: rgba(16, 33, 54, 0.8);
   text-align: center;
+}
+
+.datetime-card.is-loaded {
+  visibility: visible;
 }
 
 .datetime-wrapper {
@@ -170,6 +193,11 @@ body {
 
 .datetime-day {
   margin-right: 16px;
+}
+
+.datetime-day sup {
+  font-size: 0.35em;
+  vertical-align: super;
 }
 
 .datetime-container .datetime-wrapper:first-child {
@@ -200,6 +228,7 @@ body {
 }
 
 .datetime-icon {
+  flex-shrink: 0;
   width: 20px;
   height: 20px;
   margin-right: 8px;
@@ -247,6 +276,7 @@ body {
   }
 
   .weather-card {
+    min-height: 345px;
     margin-top: 60px;
     margin-bottom: 24px;
     padding: 32px 40px;
@@ -295,6 +325,7 @@ body {
   }
 
   .datetime-card {
+    min-height: 270px;
     margin-bottom: 40px;
     padding: 32px 40px;
   }
@@ -354,8 +385,6 @@ body {
     padding-bottom: 0;
   }
 
-  /* Full-width layout */
-
   .home > .container {
     display: flex;
     flex-direction: column;
@@ -364,7 +393,8 @@ body {
     width: 100%;
     max-width: none;
     min-width: 0;
-    min-height: 0;
+
+    min-height: max(680px, calc(100vh - 128px));
 
     margin: 0;
     padding: 0;
@@ -376,7 +406,7 @@ body {
     align-self: flex-end;
 
     width: 411px;
-    min-height: 300px;
+    min-height: 345px;
 
     margin-top: 16px;
     margin-right: 0;
@@ -427,7 +457,7 @@ body {
     padding: 6px 12px;
   }
 
-  /* Date + quote */
+  /* Date and quote — bottom edges */
 
   .dektop-wrapper {
     display: flex;
@@ -437,25 +467,24 @@ body {
     width: 100%;
     gap: 32px;
 
-    margin-top: 40px;
-    padding: 0;
+    margin-top: auto;
+    padding: 40px 0 0;
   }
 
   /* Date — left edge */
 
   .datetime-card {
-    flex-direction: column;
-    align-items: flex-start;
+    display: block;
 
     flex: 0 1 624px;
     width: 624px;
     min-width: 0;
+    min-height: 230px;
 
     margin: 0;
     padding: 32px;
 
     border-radius: 0 34px 0 0;
-
     text-align: left;
   }
 

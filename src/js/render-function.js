@@ -93,9 +93,15 @@ export function createWeatherCard(data) {
     </div>
   `;
 
+  // The day value is generated internally as a date with a suffix.
+  const safeDay = String(day ?? '').replace(
+    /^(\d{1,2})<sup>(st|nd|rd|th)<\/sup>$/,
+    (_, number, suffix) => `${number}<sup>${suffix}</sup>`
+  );
+
   dateInfo.innerHTML = `
     <ul class="datetime-wrapper">
-      <li class="datetime-day">${escapeHTML(day)}</li>
+      <li class="datetime-day">${safeDay}</li>
       <li class="datetime-weekday">${escapeHTML(weekday)}</li>
     </ul>
 
@@ -123,8 +129,9 @@ export function createWeatherCard(data) {
     </div>
   `;
 
-  weatherCard.style.display = 'block';
-  dateInfo.style.display = 'block';
+  // Keep the elements in the layout at all times.
+  weatherCard.classList.add('is-loaded');
+  dateInfo.classList.add('is-loaded');
 }
 
 export function clearWeatherCard() {
@@ -140,14 +147,11 @@ export function clearDateInfoCard() {
 ========================================= */
 
 const forecastContainer = document.querySelector('.forecast-container');
-
 const forecastCity = forecastContainer?.querySelector('.forecast-city');
-
 const forecastFiveDays = document.querySelector('.forecast-5days');
 
 export function setForecastCity(cityName, countryCode) {
   if (!forecastCity) return;
-
   forecastCity.textContent = `${cityName}, ${countryCode}`;
 }
 
@@ -170,7 +174,7 @@ function groupForecastByDay(data) {
 export function createForecastFiveDaysCards(data) {
   if (!forecastFiveDays || !forecastContainer) return;
 
-  const forecastMarkup = groupForecastByDay(data).map(([date, items]) => {
+  const markup = groupForecastByDay(data).map(([date, items]) => {
     const firstItem = items[0];
     const dateObj = getForecastDate(date);
 
@@ -195,38 +199,38 @@ export function createForecastFiveDaysCards(data) {
     const iconClass = iconMap[firstItem.weather[0].icon] || 'icon-sun';
 
     return `
-        <li class="forecast-item">
-          <p class="forecast-weekday">${weekday}</p>
-          <p class="forecast-date">${day} ${month}</p>
+      <li class="forecast-item">
+        <p class="forecast-weekday">${weekday}</p>
+        <p class="forecast-date">${day} ${month}</p>
 
-          <svg class="forecast-icon" aria-hidden="true">
-            <use href="${sprite}#${iconClass}"></use>
-          </svg>
+        <svg class="forecast-icon" aria-hidden="true">
+          <use href="${sprite}#${iconClass}"></use>
+        </svg>
 
-          <ul class="forecast-temp">
-            <li>
-              <p class="forecast-temp-title">min</p>
-              <p class="forecast-temp-value">${tempMin}&deg;</p>
-            </li>
+        <ul class="forecast-temp">
+          <li>
+            <p class="forecast-temp-title">min</p>
+            <p class="forecast-temp-value">${tempMin}&deg;</p>
+          </li>
 
-            <li>
-              <p class="forecast-temp-title">max</p>
-              <p class="forecast-temp-value">${tempMax}&deg;</p>
-            </li>
-          </ul>
+          <li>
+            <p class="forecast-temp-title">max</p>
+            <p class="forecast-temp-value">${tempMax}&deg;</p>
+          </li>
+        </ul>
 
-          <button
-            type="button"
-            class="forecast-button"
-            data-date="${date}"
-          >
-            more info
-          </button>
-        </li>
-      `;
+        <button
+          type="button"
+          class="forecast-button"
+          data-date="${date}"
+        >
+          more info
+        </button>
+      </li>
+    `;
   });
 
-  forecastFiveDays.innerHTML = forecastMarkup.join('');
+  forecastFiveDays.innerHTML = markup.join('');
   forecastContainer.style.display = 'block';
 }
 
@@ -244,7 +248,7 @@ const forecastHours = document.querySelector('.forecast-hours');
 export function renderForecastHours(data) {
   if (!forecastHours) return;
 
-  const hoursMarkup = data.map(item => {
+  const markup = data.map(item => {
     const time = item.dt_txt.slice(11, 16);
     const temp = Math.round(item.main.temp);
     const pressure = item.main.pressure;
@@ -301,11 +305,10 @@ export function renderForecastHours(data) {
     `;
   });
 
-  forecastHours.innerHTML = hoursMarkup.join('');
+  forecastHours.innerHTML = markup.join('');
   forecastHours.style.display = 'flex';
 
   const inner = document.querySelector('.forecast-container-inner');
-
   const scrollbar = document.querySelector('.scroll-bar-wrapper');
 
   if (inner) inner.style.display = 'block';
@@ -444,7 +447,6 @@ function createChartOptions() {
         display: true,
         position: 'top',
         align: 'start',
-
         labels: {
           color: '#f1f5f9',
           font: {
@@ -466,9 +468,7 @@ function createChartOptions() {
       x: {
         ticks: {
           color: '#e2e8f0',
-          font: {
-            size: 11,
-          },
+          font: { size: 11 },
           maxRotation: 0,
           minRotation: 0,
           autoSkip: true,
@@ -486,9 +486,7 @@ function createChartOptions() {
       y: {
         ticks: {
           color: '#e2e8f0',
-          font: {
-            size: 11,
-          },
+          font: { size: 11 },
           maxTicksLimit: 5,
           padding: 4,
         },
@@ -550,7 +548,6 @@ export async function renderForecastChart(forecastData) {
   if (!canvases) return;
 
   const version = ++chartRenderVersion;
-
   const Chart = await getChartModule();
 
   if (version !== chartRenderVersion) return;
