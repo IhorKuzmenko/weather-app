@@ -330,6 +330,10 @@
   color: #ff8a3d;
 }
 
+/* =========================================
+   CHART ICONS — CLICKABLE
+========================================= */
+
 .icon-container {
   display: flex;
   align-items: center;
@@ -340,10 +344,34 @@
   background-color: rgba(255, 255, 255, 0.2);
 }
 
+.chart-button-show-container .icon-container,
+.chart-button-hide-container .icon-container,
+.forecast-chart-container .icon-container {
+  cursor: pointer;
+  transition:
+    background-color 200ms ease,
+    transform 200ms ease;
+}
+
+.chart-button-show-container .icon-container:hover,
+.chart-button-hide-container .icon-container:hover,
+.forecast-chart-container .icon-container:hover {
+  background-color: rgba(255, 107, 9, 0.4);
+  transform: scale(1.08);
+}
+
+.chart-button-show-container .icon-container:focus-visible,
+.chart-button-hide-container .icon-container:focus-visible,
+.forecast-chart-container .icon-container:focus-visible {
+  outline: 2px solid #ff6b09;
+  outline-offset: 3px;
+}
+
 .button-chart-icon {
   width: 8px;
   height: 8px;
   transform: rotate(90deg);
+  pointer-events: none;
 }
 
 .button-chart-icon-up {
@@ -372,11 +400,6 @@
   min-width: 0;
   margin-top: 16px;
 }
-
-/*
-  Each chart receives its own sizing wrapper.
-  The canvas itself is controlled by Chart.js.
-*/
 
 .chart-wrapper {
   position: relative;
@@ -618,7 +641,12 @@
     scroll-behavior: auto;
   }
 
-  .scroll-bar {
+  .scroll-bar,
+  .icon-container {
     transition: none;
+  }
+
+  .icon-container:hover {
+    transform: none;
   }
 }

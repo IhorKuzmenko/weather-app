@@ -178,13 +178,8 @@ function resetForecastDetails() {
 
   const scrollbar = document.querySelector('.scroll-bar-wrapper');
 
-  if (inner) {
-    inner.style.display = 'none';
-  }
-
-  if (scrollbar) {
-    scrollbar.style.display = 'none';
-  }
+  if (inner) inner.style.display = 'none';
+  if (scrollbar) scrollbar.style.display = 'none';
 }
 
 function resetChartVisibility() {
@@ -226,11 +221,6 @@ async function updateWeather(cityOrCoords, saveToSession = false) {
         controller.signal
       );
     }
-
-    /*
-      The forecast endpoint is only needed
-      on the five-day forecast page.
-    */
 
     if (isFiveDaysPage) {
       forecastData = await getForecastFiveDays(
@@ -296,7 +286,7 @@ async function updateWeather(cityOrCoords, saveToSession = false) {
       try {
         sessionStorage.setItem(STORAGE_KEY, currentData.name);
       } catch {
-        // Weather display still works without storage.
+        // Weather display works without storage.
       }
     }
 
@@ -311,7 +301,6 @@ async function updateWeather(cityOrCoords, saveToSession = false) {
     }
 
     console.error('Weather request failed:', error);
-
     showMessage(getErrorMessage(error));
 
     return false;
@@ -396,9 +385,6 @@ if (isFiveDaysPage) {
     if (!date) return;
 
     if (activeForecastButton === button) {
-      button.classList.remove('active');
-      activeForecastButton = null;
-
       resetForecastDetails();
       return;
     }
@@ -436,11 +422,6 @@ async function showCharts() {
   buttonShowChartContainer.style.display = 'none';
   forecastChartContainer.style.display = 'flex';
 
-  /*
-    Wait for the browser to calculate
-    the visible chart container dimensions.
-  */
-
   await new Promise(resolve => {
     requestAnimationFrame(resolve);
   });
@@ -467,7 +448,6 @@ async function showCharts() {
     console.error('Chart rendering failed:', error);
 
     showMessage('Unable to display weather charts.');
-
     resetChartVisibility();
   } finally {
     if (chartsRenderingForData === forecastData) {
@@ -480,8 +460,49 @@ function hideCharts() {
   resetChartVisibility();
 }
 
+/* =========================================
+   CHART TOGGLE EVENTS
+========================================= */
+
+function addChartIconHandler(icon, button, callback, label) {
+  if (!icon || button?.contains(icon)) return;
+
+  icon.style.cursor = 'pointer';
+  icon.setAttribute('role', 'button');
+  icon.setAttribute('tabindex', '0');
+  icon.setAttribute('aria-label', label);
+
+  icon.addEventListener('click', callback);
+
+  icon.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      callback();
+    }
+  });
+}
+
 if (isFiveDaysPage) {
   buttonShowChart?.addEventListener('click', showCharts);
-
   buttonHideChart?.addEventListener('click', hideCharts);
+
+  const showIcon = buttonShowChartContainer?.querySelector('.icon-container');
+
+  const hideIcon =
+    forecastChartContainer?.querySelector('.icon-container') ||
+    document.querySelector('.chart-button-hide-container .icon-container');
+
+  addChartIconHandler(
+    showIcon,
+    buttonShowChart,
+    showCharts,
+    'Show weather charts'
+  );
+
+  addChartIconHandler(
+    hideIcon,
+    buttonHideChart,
+    hideCharts,
+    'Hide weather charts'
+  );
 }
