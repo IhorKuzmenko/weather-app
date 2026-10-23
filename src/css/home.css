@@ -1,5 +1,11 @@
+/* =========================================
+   HOME — BACKGROUND
+========================================= */
+
 body {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+  background-color: #102136;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
     url('../img/hero_tablet_home.jpg');
   background-repeat: no-repeat;
   background-position: center;
@@ -10,43 +16,48 @@ body {
   padding-bottom: 32px;
 }
 
+/* =========================================
+   WEATHER CARD
+========================================= */
+
 .weather-card {
   display: none;
-  margin-top: 40px;
-  margin-bottom: 32px;
-  padding: 32px 55px 32px 55px;
-  text-align: center;
   width: 100%;
-  background-color: #102136;
-  filter: drop-shadow(0px 5px 30px 0px rgba(16, 33, 54, 0.6));
+  margin-top: 40px;
+  margin-bottom: 24px;
+  padding: 32px 24px;
   border-radius: 34px;
+  background-color: #102136;
+  box-shadow: 0 5px 30px rgba(16, 33, 54, 0.6);
+  text-align: center;
 }
 
 .weather-icon {
-  margin-bottom: 4px;
+  display: block;
   width: 35px;
   height: 35px;
+  margin: 0 auto 4px;
 }
 
 .weather-location {
   margin-bottom: 16px;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 100%;
   color: #767d85;
+  font-size: 16px;
+  line-height: 1.2;
 }
 
 .weather-temp-wrapper {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 20px;
 }
 
 .weather-temp {
-  font-weight: 300;
   font-size: 45px;
-  line-height: 100%;
-  letter-spacing: 4%;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: 0.04em;
 }
 
 .temp-box {
@@ -64,61 +75,79 @@ body {
 
 .temp-name {
   margin-bottom: 5px;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 100%;
   color: #767d85;
+  font-size: 14px;
+  line-height: 1.2;
 }
 
 .temp-value {
-  font-weight: 400;
   font-size: 16px;
-  line-height: 100%;
+  line-height: 1.2;
 }
+
+/* =========================================
+   TODAY / 5 DAYS BUTTONS
+========================================= */
 
 .buttons-wrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
+  width: 100%;
   margin-bottom: 32px;
   padding: 0 5px;
 }
 
 .button {
-  display: inline-block;
-  padding: 5.5px 39px;
-  text-align: center;
-  min-width: 126px;
-  height: 27px;
-  text-transform: uppercase;
-  background-color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+  min-height: 30px;
+  padding: 6px 12px;
   border-radius: 20px;
-
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 100%;
+  background-color: #ffffff;
   color: #000000;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition:
+    background-color 250ms ease,
+    box-shadow 250ms ease,
+    transform 250ms ease;
+}
 
-  transition: box-shadow 250ms ease, transform 250ms ease;
+.button.inactive {
+  background-color: rgba(255, 255, 255, 0.35);
 }
 
 .button:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(16, 33, 54, 0.35);
 }
 
-.inactive {
-  background-color: #ffffff50;
+.button:focus-visible {
+  outline: 2px solid #ff6b09;
+  outline-offset: 3px;
 }
+
+/* =========================================
+   DATE AND TIME CARD
+========================================= */
 
 .datetime-card {
   display: none;
-  margin-bottom: 44px;
-  padding: 32px 50px;
-  text-align: center;
   width: 100%;
-  background-color: rgba(16, 33, 54, 0.8);
+  margin-bottom: 36px;
+  padding: 32px 16px;
   border-radius: 34px;
+  background-color: rgba(16, 33, 54, 0.8);
+  text-align: center;
 }
 
 .datetime-wrapper {
@@ -127,119 +156,122 @@ body {
   justify-content: center;
 }
 
-.datetime-wrapper:nth-child(1) {
-  margin-bottom: 19px;
-}
-
-.datetime-container .datetime-wrapper:nth-child(1) {
-  margin-bottom: 16px;
-}
-
-.datetime-container .datetime-wrapper:nth-child(2) li {
-  display: flex;
-  align-items: center;
-  padding: 0 10px;
-}
-
-.datetime-container .datetime-wrapper:nth-child(2) li:last-child {
-  border-left: 1px solid #ffffff40;
+.datetime-card > .datetime-wrapper {
+  margin-bottom: 20px;
 }
 
 .datetime-day,
 .datetime-weekday {
+  font-size: clamp(38px, 11vw, 45px);
   font-weight: 300;
-  font-size: 45px;
-  line-height: 100%;
-  letter-spacing: 4%;
+  line-height: 1.1;
+  letter-spacing: 0.04em;
 }
 
 .datetime-day {
-  margin-right: 20px;
+  margin-right: 16px;
+}
+
+.datetime-container .datetime-wrapper:first-child {
+  margin-bottom: 18px;
 }
 
 .datetime-month,
 .datetime-time {
-  padding: 0px 10px;
-  font-weight: 400;
+  padding: 0 10px;
   font-size: 14px;
-  line-height: 100%;
-  letter-spacing: 4%;
+  line-height: 1.2;
 }
 
 .datetime-month {
-  border-right: 1px solid #ffffff40;
+  border-right: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.datetime-container .datetime-wrapper:last-child li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 0 10px;
+}
+
+.datetime-container .datetime-wrapper:last-child li:last-child {
+  border-left: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .datetime-icon {
-  margin-right: 9px;
   width: 20px;
   height: 20px;
+  margin-right: 8px;
   fill: #ff6b09;
 }
 
 .datetime-sunrise,
 .datetime-sunset {
-  font-weight: 400;
-  line-height: 100%;
-  letter-spacing: 4%;
+  font-size: 14px;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
-.datetime-sunrise {
-  margin-right: 7px;
+/* =========================================
+   QUOTE
+========================================= */
+
+.dektop-wrapper {
+  width: 100%;
 }
 
 .home-quote {
-  margin-bottom: 8px;
-  text-align: end;
+  margin-bottom: 12px;
+  font-size: 14px;
   font-style: italic;
   font-weight: 400;
-  font-size: 14px;
   line-height: 1.5;
-  letter-spacing: 4%;
+  letter-spacing: 0.02em;
+  text-align: right;
 }
 
 .home-quote-author {
-  text-align: end;
-  font-weight: 400;
   font-size: 18px;
-  line-height: 100%;
-  letter-spacing: 4%;
+  line-height: 1.2;
+  text-align: right;
 }
 
-/* FOR TABLET */
+/* =========================================
+   TABLET — 768px+
+========================================= */
 
 @media (min-width: 768px) {
-  body {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
-      url('../img/hero_tablet_home.jpg');
-  }
-
   .home {
     padding-bottom: 40px;
   }
 
   .weather-card {
-    display: none;
-    margin-top: 106px;
-    padding: 32px 280px 32px 280px;
+    margin-top: 60px;
+    margin-bottom: 24px;
+    padding: 32px 40px;
   }
 
   .weather-icon {
     margin-bottom: 5px;
   }
 
-  .weather-temp-wrapper {
-    display: flex;
-    flex-direction: column;
-  }
-
   .weather-location {
     font-size: 18px;
+  }
+
+  .weather-temp-wrapper {
+    flex-direction: column;
+    gap: 0;
   }
 
   .weather-temp {
     margin-bottom: 16px;
     font-size: 90px;
+  }
+
+  .temp-item {
+    padding: 15px;
   }
 
   .temp-name {
@@ -251,40 +283,24 @@ body {
     font-size: 18px;
   }
 
-  .temp-item {
-    padding: 15px;
-  }
-
   .buttons-wrapper {
-    margin: 0 auto;
-    margin-bottom: 32px;
     width: 336px;
+    margin: 0 auto 32px;
+    padding: 0;
+    gap: 20px;
   }
 
   .button {
-    display: inline-block;
-    padding: 5.5px 52px;
-    min-width: 152px;
-
-    font-weight: 700;
-    font-size: 14px;
+    min-height: 30px;
   }
 
   .datetime-card {
-    margin-bottom: 60px;
-    padding: 32px 207px;
+    margin-bottom: 40px;
+    padding: 32px 40px;
   }
 
-  .datetime-wrapper:nth-child(1) {
-    margin-bottom: 16px;
-  }
-
-  .datetime-container .datetime-wrapper:nth-child(1) {
-    margin-bottom: 30px;
-  }
-
-  .datetime-container .datetime-wrapper:nth-child(2) li {
-    padding: 0 16px;
+  .datetime-card > .datetime-wrapper {
+    margin-bottom: 20px;
   }
 
   .datetime-day,
@@ -292,14 +308,18 @@ body {
     font-size: 90px;
   }
 
+  .datetime-container .datetime-wrapper:first-child {
+    margin-bottom: 24px;
+  }
+
   .datetime-month,
   .datetime-time {
-    padding: 0px 16px;
+    padding: 0 16px;
     font-size: 18px;
   }
 
-  .datetime-icon {
-    margin-right: 8px;
+  .datetime-container .datetime-wrapper:last-child li {
+    padding: 0 16px;
   }
 
   .datetime-sunrise,
@@ -308,9 +328,9 @@ body {
   }
 
   .home-quote {
+    max-width: 380px;
     margin-left: auto;
     margin-bottom: 20px;
-    width: 380px;
     font-size: 22px;
   }
 
@@ -319,11 +339,14 @@ body {
   }
 }
 
-/* FOR DESKTOP */
+/* =========================================
+   DESKTOP — 1280px+
+========================================= */
 
 @media (min-width: 1280px) {
   body {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
       url('../img/desktop_home.jpg');
   }
 
@@ -331,20 +354,52 @@ body {
     padding-bottom: 0;
   }
 
+  /* Full-width layout */
+
+  .home > .container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    min-height: 0;
+
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Weather card — right edge */
+
   .weather-card {
-    margin-left: auto;
-    padding: 32px 107px 32px 107px;
-    text-align: center;
+    align-self: flex-end;
+
     width: 411px;
-    height: 100%;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+    min-height: 300px;
+
+    margin-top: 16px;
+    margin-right: 0;
+    margin-bottom: 20px;
+    margin-left: auto;
+
+    padding: 32px 48px;
+
+    border-radius: 34px 0 0 34px;
   }
 
   .weather-icon {
     width: 55px;
     height: 35px;
     margin-bottom: 4px;
+  }
+
+  .weather-location {
+    margin-bottom: 16px;
+  }
+
+  .weather-temp {
+    font-size: 90px;
   }
 
   .temp-name {
@@ -355,83 +410,136 @@ body {
     padding: 16px;
   }
 
+  /* Buttons — below weather card */
+
   .buttons-wrapper {
-    justify-content: space-between;
-    margin: 0;
-    margin-bottom: 85px;
-    margin-left: auto;
+    align-self: flex-end;
+
     width: 411px;
+
+    margin: 0 0 0 auto;
+    padding: 0;
+    gap: 24px;
   }
 
   .button {
-    padding: 5.5px 67px;
-    min-width: 182px;
+    min-height: 32px;
+    padding: 6px 12px;
   }
+
+  /* Date + quote */
 
   .dektop-wrapper {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
-    padding-right: 16px;
+
+    width: 100%;
+    gap: 32px;
+
+    margin-top: 40px;
+    padding: 0;
   }
 
-  .datetime-container .datetime-wrapper:nth-child(1) {
-    margin-bottom: 0;
-  }
-
-  .datetime-container .datetime-wrapper:nth-child(2) {
-    margin-bottom: 0;
-  }
+  /* Date — left edge */
 
   .datetime-card {
-    display: flex !important;
     flex-direction: column;
     align-items: flex-start;
-    margin-bottom: 0;
-    padding: 50px 103px 80px 16px;
+
+    flex: 0 1 624px;
     width: 624px;
-    border-radius: 0;
-    border-top-right-radius: 34px;
+    min-width: 0;
+
+    margin: 0;
+    padding: 32px;
+
+    border-radius: 0 34px 0 0;
+
+    text-align: left;
+  }
+
+  .datetime-card > .datetime-wrapper {
+    justify-content: flex-start;
+    margin-bottom: 20px;
+  }
+
+  .datetime-day,
+  .datetime-weekday {
+    font-size: clamp(60px, 6vw, 90px);
   }
 
   .datetime-container {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+
     width: 100%;
+  }
+
+  .datetime-container .datetime-wrapper:first-child,
+  .datetime-container .datetime-wrapper:last-child {
+    margin-bottom: 0;
   }
 
   .datetime-month {
     padding-left: 0;
   }
 
+  /* Quote — right edge */
+
+  .dektop-wrapper > div:last-child {
+    flex: 0 1 411px;
+    min-width: 0;
+
+    margin-right: 0;
+    padding-right: 24px;
+    padding-bottom: 24px;
+  }
+
   .home-quote {
-    margin-bottom: 32px;
-    width: 411px;
+    max-width: 411px;
+    margin-bottom: 24px;
+    font-size: 22px;
+  }
+
+  .home-quote-author {
+    font-size: 18px;
   }
 }
 
-/* RETINA */
+/* =========================================
+   RETINA BACKGROUNDS
+========================================= */
 
-@media (min-resolution: 192dpi), (min-resolution: 2dppx) {
+@media (min-resolution: 2dppx) {
   body {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
       url('../img/hero_tablet_home@2x.jpg');
   }
 }
 
-@media (min-width: 768px) and (min-resolution: 192dpi),
-  (min-width: 768px) and (min-resolution: 2dppx) {
+@media (min-width: 1280px) and (min-resolution: 2dppx) {
   body {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
-      url('../img/hero_tablet_home@2x.jpg');
-  }
-}
-
-@media (min-width: 1280px) and (min-resolution: 192dpi),
-  (min-width: 1280px) and (min-resolution: 2dppx) {
-  body {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
       url('../img/desktop_home@2x.jpg');
+  }
+}
+
+/* =========================================
+   REDUCED MOTION
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+  }
+
+  .button:hover {
+    transform: none;
   }
 }
