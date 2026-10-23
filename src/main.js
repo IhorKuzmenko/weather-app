@@ -5,6 +5,7 @@ import {
   getWeatherData,
   getWeatherByCoords,
   getForecastFiveDays,
+  getForecastFiveDaysByCoords,
 } from './js/weather-api';
 
 import {
@@ -173,32 +174,38 @@ async function updateWeather(cityOrCoords, saveToSession = false) {
   setWeatherLoading(true);
 
   try {
-    const currentData =
-      typeof cityOrCoords === 'string'
-        ? await getWeatherData(cityOrCoords, controller.signal)
-        : await getWeatherByCoords(
-            cityOrCoords.lat,
-            cityOrCoords.lon,
-            controller.signal
-          );
-
+    let currentData = null;
     let forecastData = null;
 
+    if (isTodayPage) {
+      currentData =
+        typeof cityOrCoords === 'string'
+          ? await getWeatherData(cityOrCoords, controller.signal)
+          : await getWeatherByCoords(
+              cityOrCoords.lat,
+              cityOrCoords.lon,
+              controller.signal
+            );
+    }
+
     if (isFiveDaysPage) {
-      forecastData = await getForecastFiveDays(
-        currentData.name,
-        controller.signal
-      );
+      forecastData =
+        typeof cityOrCoords === 'string'
+          ? await getForecastFiveDays(cityOrCoords, controller.signal)
+          : await getForecastFiveDaysByCoords(
+              cityOrCoords.lat,
+              cityOrCoords.lon,
+              controller.signal
+            );
     }
 
     if (controller.signal.aborted || currentRequest !== requestVersion) {
       return false;
     }
 
-    if (isTodayPage) {
+    if (isTodayPage && currentData) {
       const dateInfo = getDateInfo(currentData.timezone);
 
-      // Update existing content without hiding the cards.
       createWeatherCard({
         city: currentData.name,
         country: currentData.sys.country,
@@ -228,9 +235,11 @@ async function updateWeather(cityOrCoords, saveToSession = false) {
       initScroll();
     }
 
-    if (saveToSession) {
+    const resolvedCity = currentData?.name || forecastData?.city?.name;
+
+    if (saveToSession && resolvedCity) {
       try {
-        sessionStorage.setItem(STORAGE_KEY, currentData.name);
+        sessionStorage.setItem(STORAGE_KEY, resolvedCity);
       } catch {
         // Storage may be unavailable.
       }

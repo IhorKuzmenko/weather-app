@@ -36,3 +36,7 @@ export function getWeatherByCoords(lat, lon, signal) {
 export function getForecastFiveDays(city, signal) {
   return fetchWeather('/forecast', { q: city }, signal);
 }
+
+export function getForecastFiveDaysByCoords(lat, lon, signal) {
+  return fetchWeather('/forecast', { lat, lon }, signal);
+}

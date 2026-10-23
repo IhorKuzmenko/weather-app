@@ -15,9 +15,24 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <link
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap"
-      rel="stylesheet"
     />
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap"
+      media="print"
+      onload="this.media = 'all'"
+    />
+
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap"
+      />
+    </noscript>
 
     <link rel="stylesheet" href="./css/styles.css" />
 
@@ -58,7 +73,7 @@
             class="buttons-wrapper buttons-wrapper-five-days"
             aria-label="Weather forecast"
           >
-            <a class="button inactive" href="./index.html"> Today </a>
+            <a class="button inactive" href="./index.html">Today</a>
 
             <a class="button" href="./five-days.html" aria-current="page">
               5 days
